@@ -1,0 +1,39 @@
+﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using System;
+using System.Collections.Generic;
+using System.Data.Entity;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using Twitter.Data.Models;
+
+namespace Twitter.Repository
+{
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
+    {
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<UserBookmarks>()
+                .HasKey(b => new { b.UserId, b.TweetId });
+            modelBuilder.Entity<UserLikes>()
+                .HasKey(b => new { b.UserId, b.TweetId });
+            modelBuilder.Entity<Following>()
+                .HasOne(u => u.FollowerUser)
+                .WithMany(u => u.Following)
+                .IsRequired()
+    .           OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Following>()
+                .HasOne(u => u.FollowingUser)
+                .WithMany(u => u.Followers)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Following>()
+                .HasKey(b => new { b.FollowerId, b.FollowingId });
+        }
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+        {
+        }
+    }
+}
