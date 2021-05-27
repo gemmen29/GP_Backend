@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
-using System.Data.Entity;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,6 +30,18 @@ namespace Twitter.Repository
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Following>()
                 .HasKey(b => new { b.FollowerId, b.FollowingId });
+            modelBuilder.Entity<Tweet>()
+                .HasOne(u => u.RespondedTweet)
+                .WithOne(u => u.Tweet)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Tweet>()
+                .HasMany(u => u.Replies)
+                .WithOne(u => u.ReplyTweet)
+                .IsRequired()
+                .OnDelete(DeleteBehavior.Restrict);
+            modelBuilder.Entity<Reply>()
+                .HasKey(r => new { r.TweetId, r.ReplyId});
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

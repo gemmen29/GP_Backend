@@ -25,5 +25,8 @@ namespace Twitter.Data.Models
 
         [JsonIgnore]
         public List<Reply> Replies { get; set; }
+
+        [JsonIgnore]
+        public Reply RespondedTweet { get; set; }
     }
 }

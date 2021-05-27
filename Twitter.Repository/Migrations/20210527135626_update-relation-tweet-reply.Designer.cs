@@ -10,8 +10,8 @@ using Twitter.Repository;
 namespace Twitter.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210524201508_addRoles")]
-    partial class addRoles
+    [Migration("20210527135626_update-relation-tweet-reply")]
+    partial class updaterelationtweetreply
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -244,17 +244,16 @@ namespace Twitter.Repository.Migrations
 
             modelBuilder.Entity("Twitter.Data.Models.Reply", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int?>("TweetId")
+                    b.Property<int>("TweetId")
                         .HasColumnType("int");
 
-                    b.HasKey("Id");
+                    b.Property<int>("ReplyId")
+                        .HasColumnType("int");
 
-                    b.HasIndex("TweetId");
+                    b.HasKey("TweetId", "ReplyId");
+
+                    b.HasIndex("ReplyId")
+                        .IsUnique();
 
                     b.ToTable("Reply");
                 });
@@ -384,9 +383,21 @@ namespace Twitter.Repository.Migrations
 
             modelBuilder.Entity("Twitter.Data.Models.Reply", b =>
                 {
-                    b.HasOne("Twitter.Data.Models.Tweet", null)
+                    b.HasOne("Twitter.Data.Models.Tweet", "ReplyTweet")
+                        .WithOne("RespondedTweet")
+                        .HasForeignKey("Twitter.Data.Models.Reply", "ReplyId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
                         .WithMany("Replies")
-                        .HasForeignKey("TweetId");
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReplyTweet");
+
+                    b.Navigation("Tweet");
                 });
 
             modelBuilder.Entity("Twitter.Data.Models.Tweet", b =>
@@ -456,6 +467,8 @@ namespace Twitter.Repository.Migrations
                     b.Navigation("LikedTweets");
 
                     b.Navigation("Replies");
+
+                    b.Navigation("RespondedTweet");
                 });
 #pragma warning restore 612, 618
         }

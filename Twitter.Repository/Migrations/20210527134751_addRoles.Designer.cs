@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Twitter.Repository;
 
 namespace Twitter.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210527134751_addRoles")]
+    partial class addRoles
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -250,7 +252,9 @@ namespace Twitter.Repository.Migrations
 
                     b.HasKey("TweetId", "ReplyId");
 
-                    b.HasIndex("ReplyId")
+                    b.HasIndex("ReplyId");
+
+                    b.HasIndex("TweetId")
                         .IsUnique();
 
                     b.ToTable("Reply");
@@ -381,15 +385,15 @@ namespace Twitter.Repository.Migrations
 
             modelBuilder.Entity("Twitter.Data.Models.Reply", b =>
                 {
-                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
-                        .WithOne("RespondedTweet")
-                        .HasForeignKey("Twitter.Data.Models.Reply", "ReplyId")
+                    b.HasOne("Twitter.Data.Models.Tweet", "ReplyTweet")
+                        .WithMany("Replies")
+                        .HasForeignKey("ReplyId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
-                    b.HasOne("Twitter.Data.Models.Tweet", "ReplyTweet")
-                        .WithMany("Replies")
-                        .HasForeignKey("TweetId")
+                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
+                        .WithOne("RespondedTweet")
+                        .HasForeignKey("Twitter.Data.Models.Reply", "TweetId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

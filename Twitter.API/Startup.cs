@@ -82,6 +82,9 @@ namespace Twitter.API
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiWithJWT", Version = "v1" });
             });
             services.AddCors();
+
+            services.AddHttpContextAccessor();//allow me to get user information such as id
+            services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

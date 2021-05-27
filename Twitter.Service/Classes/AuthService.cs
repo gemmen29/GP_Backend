@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
@@ -17,7 +18,7 @@ using Twitter.Service.Interfaces;
 
 namespace Twitter.Service.Classes
 {
-    public class AuthService : IAuthService
+    public class AuthService : BaseService, IAuthService
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
@@ -25,7 +26,12 @@ namespace Twitter.Service.Classes
         private readonly IConfiguration _configuration;
         private readonly JWT _jwt;
 
-        public AuthService(UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IOptions<JWT> jwt, IMailService mailService, IConfiguration configuration)
+        public AuthService(UserManager<ApplicationUser> userManager,
+            RoleManager<IdentityRole> roleManager,
+            IOptions<JWT> jwt,
+            IMailService mailService,
+            IConfiguration configuration,
+            IMapper mapper) : base(mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
@@ -42,15 +48,8 @@ namespace Twitter.Service.Classes
             if (await _userManager.FindByNameAsync(model.Username) is not null)
                 return new AuthModel { Message = "Username is already registered!" };
 
-
-            //You can use AutoMapper instead
-            var user = new ApplicationUser
-            {
-                UserName = model.Username,
-                Email = model.Email,
-                FirstName = model.FirstName,
-                LastName = model.LastName
-            };
+            ApplicationUser user = new ApplicationUser();
+            Mapper.Map(model, user);
 
             //Register the user using UserManager
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -263,6 +262,20 @@ namespace Twitter.Service.Classes
                 signingCredentials: signingCredentials);
 
             return jwtSecurityToken;
+        }
+
+        public async Task<UserDetails> GetCurrentUser(string email)
+        {
+            var user = await _userManager.FindByEmailAsync(email);
+            var userDetails = new UserDetails();
+            if (user is null)
+            {
+                userDetails.Message = "Email is incorrect!";
+                return userDetails;
+            }
+            Mapper.Map(user, userDetails);
+            userDetails.Message = "User Returned Successfully";
+            return userDetails;
         }
     }
 }

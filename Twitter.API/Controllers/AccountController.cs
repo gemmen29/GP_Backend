@@ -119,5 +119,17 @@ namespace Twitter.API.Controllers
 
             return BadRequest("Some properties are not valid");
         }
+
+        [HttpGet("details/{email}")]
+        public async Task<IActionResult> CurrentUserDetails(string email)
+        {
+
+            var result = await _authService.GetCurrentUser(email);
+
+            if (result == null)
+                return BadRequest("Not Valid User");
+
+            return Ok(result);
+        }
     }
 }

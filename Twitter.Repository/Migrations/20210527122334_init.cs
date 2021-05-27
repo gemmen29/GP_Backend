@@ -203,13 +203,18 @@ namespace Twitter.Repository.Migrations
                 name: "Reply",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    TweetId = table.Column<int>(type: "int", nullable: true)
+                    TweetId = table.Column<int>(type: "int", nullable: false),
+                    ReplyId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Reply", x => x.Id);
+                    table.PrimaryKey("PK_Reply", x => new { x.TweetId, x.ReplyId });
+                    table.ForeignKey(
+                        name: "FK_Reply_Tweet_ReplyId",
+                        column: x => x.ReplyId,
+                        principalTable: "Tweet",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
                         name: "FK_Reply_Tweet_TweetId",
                         column: x => x.TweetId,
@@ -311,9 +316,15 @@ namespace Twitter.Repository.Migrations
                 column: "FollowingId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reply_ReplyId",
+                table: "Reply",
+                column: "ReplyId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reply_TweetId",
                 table: "Reply",
-                column: "TweetId");
+                column: "TweetId",
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Tweet_AuthorId",
