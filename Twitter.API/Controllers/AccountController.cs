@@ -90,12 +90,12 @@ namespace Twitter.API.Controllers
 
         // api/account/forgetpassword
         [HttpPost("ForgetPassword")]
-        public async Task<IActionResult> ForgetPassword(string email)
+        public async Task<IActionResult> ForgetPassword(ForgotPasswordModel forgotPasswordModel)
         {
-            if (string.IsNullOrEmpty(email))
+            if (string.IsNullOrEmpty(forgotPasswordModel.Email))
                 return NotFound();
 
-            var result = await _authService.ForgetPasswordAsync(email);
+            var result = await _authService.ForgetPasswordAsync(forgotPasswordModel);
 
             if (result.IsAuthenticated)
                 return Ok(result); // 200
@@ -105,7 +105,7 @@ namespace Twitter.API.Controllers
 
         // api/account/resetpassword
         [HttpPost("ResetPassword")]
-        public async Task<IActionResult> ResetPassword([FromForm] ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPassword(ResetPasswordModel model)
         {
             if (ModelState.IsValid)
             {

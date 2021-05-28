@@ -13,8 +13,8 @@ namespace Twitter.Service.Interfaces
         Task<AuthModel> LoginAsync(LoginModel model);
         Task<string> AddRoleAsync(AddRoleModel model);
         Task<AuthModel> ConfirmEmailAsync(string userId, string token);
-        Task<AuthModel> ForgetPasswordAsync(string email);
-        Task<AuthModel> ResetPasswordAsync(ResetPasswordViewModel model);
+        Task<AuthModel> ForgetPasswordAsync(ForgotPasswordModel forgotPasswordModel);
+        Task<AuthModel> ResetPasswordAsync(ResetPasswordModel model);
         Task<UserDetails> GetCurrentUser(string email);
     }
 }

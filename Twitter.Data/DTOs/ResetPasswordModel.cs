@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Twitter.Data.DTOs
 {
-    public class ResetPasswordViewModel
+    public class ResetPasswordModel
     {
         [Required]
         public string Token { get; set; }
@@ -17,7 +17,7 @@ namespace Twitter.Data.DTOs
 
         [Required]
         [StringLength(50, MinimumLength = 5)]
-        public string NewPassword { get; set; }
+        public string Password { get; set; }
 
         [Required]
         [StringLength(50, MinimumLength = 5)]

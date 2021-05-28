@@ -169,9 +169,9 @@ namespace Twitter.Service.Classes
             };
         }
 
-        public async Task<AuthModel> ForgetPasswordAsync(string email)
+        public async Task<AuthModel> ForgetPasswordAsync(ForgotPasswordModel forgotPasswordModel)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByEmailAsync(forgotPasswordModel.Email);
             if (user == null)
                 return new AuthModel
                 {
@@ -183,9 +183,9 @@ namespace Twitter.Service.Classes
             var encodedToken = Encoding.UTF8.GetBytes(token);
             var validToken = WebEncoders.Base64UrlEncode(encodedToken);
 
-            string url = $"{_configuration["AppUrl"]}/ResetPassword?email={email}&token={validToken}";
+            string url = $"{forgotPasswordModel.ClientURI}?email={forgotPasswordModel.Email}&token={validToken}";
 
-            _mailService.SendEmail(email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
+            _mailService.SendEmail(forgotPasswordModel.Email, "Reset Password", "<h1>Follow the instructions to reset your password</h1>" +
                 $"<p>To reset your password <a href='{url}'>Click here</a></p>");
 
             return new AuthModel
@@ -195,7 +195,7 @@ namespace Twitter.Service.Classes
             };
         }
 
-        public async Task<AuthModel> ResetPasswordAsync(ResetPasswordViewModel model)
+        public async Task<AuthModel> ResetPasswordAsync(ResetPasswordModel model)
         {
             var user = await _userManager.FindByEmailAsync(model.Email);
             if (user == null)
@@ -205,7 +205,7 @@ namespace Twitter.Service.Classes
                     Message = "No user associated with email",
                 };
 
-            if (model.NewPassword != model.ConfirmPassword)
+            if (model.Password != model.ConfirmPassword)
                 return new AuthModel
                 {
                     IsAuthenticated = false,
@@ -215,7 +215,7 @@ namespace Twitter.Service.Classes
             var decodedToken = WebEncoders.Base64UrlDecode(model.Token);
             string normalToken = Encoding.UTF8.GetString(decodedToken);
 
-            var result = await _userManager.ResetPasswordAsync(user, normalToken, model.NewPassword);
+            var result = await _userManager.ResetPasswordAsync(user, normalToken, model.Password);
 
             if (result.Succeeded)
                 return new AuthModel
