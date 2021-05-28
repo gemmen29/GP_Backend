@@ -44,6 +44,7 @@ namespace Twitter.API
             //this service will have our logic
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IMailService, SendGridMailService>();
+            services.AddScoped<ITweetService, TweetService>();
 
             //define connection string
             services.AddDbContext<ApplicationDbContext>(options =>
