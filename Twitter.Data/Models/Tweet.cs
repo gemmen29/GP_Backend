@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
 using System.Text;
@@ -19,7 +20,6 @@ namespace Twitter.Data.Models
         [JsonIgnore]
         public List<UserBookmarks> BookMarkedTweets { get; set; }
 
-        [JsonIgnore]
         [InverseProperty("Tweets")]
         public ApplicationUser Author { get; set; }
 
