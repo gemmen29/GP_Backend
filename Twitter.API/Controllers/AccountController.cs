@@ -131,5 +131,19 @@ namespace Twitter.API.Controllers
 
             return Ok(result);
         }
+
+        [HttpPost("update")]
+        public async Task<IActionResult> UpdateAsync(string userName, UpdateModel model) //we don't need [FromModel], attribute [ApiController] will know it without writing it. 
+        {
+            //if (!ModelState.IsValid) { return BadRequest(ModelState); }       //we don't need this check,  attribute [ApiController] will do it for us and return Modelstate in the result.
+
+            var result = await _authService.UpdateAsync(userName, model);
+
+            if (!result.IsAuthenticated)
+                return BadRequest(result.Message);
+
+            return Ok(result);
+            //return Ok(new { Email = result.Email, Token = result.Token });    //if you want to return some of the data not all of it.
+        }
     }
 }
