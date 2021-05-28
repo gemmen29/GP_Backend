@@ -11,6 +11,8 @@ namespace Twitter.Repository
 {
     public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
+        public DbSet<Tweet> Tweet { get; set; }
+        public DbSet<Reply> Reply { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -277,5 +277,29 @@ namespace Twitter.Service.Classes
             userDetails.Message = "User Returned Successfully";
             return userDetails;
         }
+
+        public async Task<AuthModel> UpdateAsync(string userName, UpdateModel model)
+        {
+
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            Mapper.Map(model, user);
+
+            //Register the user using UserManager
+            var result = await _userManager.UpdateAsync(user);
+
+
+            //if not success return error message
+            if (!result.Succeeded)
+            {
+                var errors = string.Empty;
+
+                foreach (var error in result.Errors)
+                    errors += $"{error.Description},";
+
+                return new AuthModel { Message = errors };
+            }
+
+            return new AuthModel { Message = "Updated Successfully!" };
+        }
     }
 }
