@@ -13,6 +13,7 @@ namespace Twitter.Repository
     {
         public DbSet<Tweet> Tweet { get; set; }
         public DbSet<Reply> Reply { get; set; }
+        public DbSet<Following> Following { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
