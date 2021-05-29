@@ -10,6 +10,8 @@ namespace Twitter.Service.Interfaces
     public interface ITweetService
     {
         IEnumerable<Tweet> GetTweets();
+        IEnumerable<Tweet> GetMyTweets(string id);
+        IEnumerable<Tweet> GetHomePageTweets(string id);
         Tweet GetTweet(int id);
         Task<Tweet> PostTweet(string authorId, Tweet tweet);
         Task<Tweet> PostReplyToTweet(int id, string authorId, Tweet tweet);

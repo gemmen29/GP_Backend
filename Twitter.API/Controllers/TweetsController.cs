@@ -8,6 +8,8 @@ using Microsoft.EntityFrameworkCore;
 using Twitter.Data.Models;
 using Twitter.Repository;
 using Twitter.Service.Interfaces;
+using PagedList;
+
 
 namespace Twitter.API.Controllers
 {
@@ -24,9 +26,26 @@ namespace Twitter.API.Controllers
 
         // GET: api/Tweets
         [HttpGet]
-        public ActionResult<IEnumerable<Tweet>> GetTweets()
+        public ActionResult<IEnumerable<Tweet>> GetTweets(int? page)
         {
-            return _tweetService.GetTweets().ToList();
+            int pageNumber = (page ?? 1);
+            return _tweetService.GetTweets().ToPagedList(pageNumber,10).ToList();
+        }
+
+        // GET: api/MyTweets
+        [HttpGet("MyTweets/{id}")]
+        public ActionResult<IEnumerable<Tweet>> GetMyTweets(string id, int? page)
+        {
+            int pageNumber = (page ?? 1);
+            return _tweetService.GetMyTweets(id).ToPagedList(pageNumber, 10).ToList();
+        }
+
+        // GET: api/HomePageTweets
+        [HttpGet("HomePageTweets/{id}")]
+        public ActionResult<IEnumerable<Tweet>> GetHomePageTweets(string id, int? page)
+        {
+            int pageNumber = (page ?? 1);
+            return _tweetService.GetHomePageTweets(id).ToPagedList(pageNumber, 10).ToList();
         }
 
         // GET: api/Tweets/5
@@ -62,7 +81,7 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/TweetReplies
-        [HttpGet("TweetReplies")]
+        [HttpGet("TweetReplies/{id}")]
         public ActionResult<IEnumerable<Tweet>> GetTweetReplies(int id)
         {
             return this._tweetService.GetTweetReplies(id).ToList();

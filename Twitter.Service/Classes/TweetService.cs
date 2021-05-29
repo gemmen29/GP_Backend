@@ -57,6 +57,28 @@ namespace Twitter.Service.Classes
             return _context.Tweet.Include(t => t.Author);
         }
 
+        public IEnumerable<Tweet> GetMyTweets(string id)
+        {
+            ApplicationUser author = _context.Users.Where(u => u.Id == id).FirstOrDefault();
+            return _context.Tweet.Where(t => t.Author == author);
+        }
+
+        public IEnumerable<Tweet> GetHomePageTweets(string id)
+        {
+            var followings = _context.Following.Where(f => f.FollowerId == id).Select(f => f.FollowingUser).ToList();
+            var tweets = new List<Tweet>();
+            
+            foreach(var following in followings)
+            {
+                tweets.AddRange(_context.Tweet.Where(t => t.Author == following).ToList());
+            }
+            
+            ApplicationUser author = _context.Users.Where(u => u.Id == id).FirstOrDefault();
+            tweets.AddRange(_context.Tweet.Where(t => t.Author == author).ToList());
+
+            return tweets;
+        }
+
         public async Task<Tweet> PostReplyToTweet(int id, string authorId, Tweet tweet)
         {
             ApplicationUser author = _context.Users.Where(u => u.Id == authorId).FirstOrDefault();
