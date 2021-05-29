@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Twitter.Data.DTOs
 {
-    public class UpdateModel
+    public class UpdateUserModel
     {
         [Required]
         public string FirstName { get; set; }
