@@ -85,7 +85,7 @@ namespace Twitter.API.Controllers
                 return Redirect($"{_configuration["AppUrl"]}/ConfirmEmail.html");
             }
 
-            return BadRequest(result);
+            return BadRequest(result.Message);
         }
 
         // api/account/forgetpassword
@@ -98,9 +98,9 @@ namespace Twitter.API.Controllers
             var result = await _authService.ForgetPasswordAsync(forgotPasswordModel);
 
             if (result.IsAuthenticated)
-                return Ok(result); // 200
+                return Ok(new {Message =  result.Message }); // in success you have to return object not just the message
 
-            return BadRequest(result); // 400
+            return BadRequest(result.Message); // in error you can return just the response 
         }
 
         // api/account/resetpassword
@@ -112,9 +112,9 @@ namespace Twitter.API.Controllers
                 var result = await _authService.ResetPasswordAsync(model);
 
                 if (result.IsAuthenticated)
-                    return Ok(result);
+                    return Ok(new { Message = result.Message });
 
-                return BadRequest(result);
+                return BadRequest(result.Message);
             }
 
             return BadRequest("Some properties are not valid");

@@ -61,7 +61,7 @@ namespace Twitter.Service.Classes
                 var errors = string.Empty;
 
                 foreach (var error in result.Errors)
-                    errors += $"{error.Description},";
+                    errors += $"{error.Description}";
 
                 return new AuthModel { Message = errors };
             }
@@ -162,10 +162,14 @@ namespace Twitter.Service.Classes
                     IsAuthenticated = true,
                 };
 
+            //if not success
+            var errors = string.Empty;
+            foreach (var error in result.Errors)
+                errors += $"{error.Description}";
             return new AuthModel
             {
                 IsAuthenticated = false,
-                Message = "Email did not confirm" + result.Errors.Select(e => e.Description)
+                Message = "Email did not confirm, " + errors
             };
         }
 
@@ -224,9 +228,13 @@ namespace Twitter.Service.Classes
                     IsAuthenticated = true,
                 };
 
+            //if not success
+            var errors = string.Empty;
+            foreach (var error in result.Errors)
+                errors += $"{error.Description}";
             return new AuthModel
             {
-                Message = "Something went wrong, " + result.Errors.Select(e => e.Description),
+                Message = errors,
                 IsAuthenticated = false
             };
         }
