@@ -286,7 +286,7 @@ namespace Twitter.Service.Classes
             return userDetails;
         }
 
-        public async Task<AuthModel> UpdateAsync(string userName, UpdateModel model)
+        public async Task<AuthModel> UpdateAsync(string userName, UpdateUserModel model)
         {
 
             ApplicationUser user = await _userManager.FindByNameAsync(userName);
@@ -307,7 +307,9 @@ namespace Twitter.Service.Classes
                 return new AuthModel { Message = errors };
             }
 
-            return new AuthModel { Message = "Updated Successfully!" };
+            return new AuthModel { 
+                IsAuthenticated = true,
+                Message = "Updated Successfully!" };
         }
     }
 }

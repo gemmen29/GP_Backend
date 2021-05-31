@@ -16,9 +16,13 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Data.DTOs;
 using Twitter.Data.Helpers;
 using Twitter.Data.Models;
 using Twitter.Repository;
+using Twitter.Repository.classes;
+using Twitter.Repository.Classes;
+using Twitter.Repository.Interfaces;
 using Twitter.Service.Classes;
 using Twitter.Service.Interfaces;
 
@@ -45,6 +49,10 @@ namespace Twitter.API
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<ITweetService, TweetService>();
+            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            //services.AddScoped(typeof(ISearch<>), typeof(SearchUserRepository));
+            services.AddScoped<ISearch<ApplicationUser>, SearchUserRepository>();
+            services.AddScoped<SearchUserService>();
 
             //define connection string
             services.AddDbContext<ApplicationDbContext>(options =>

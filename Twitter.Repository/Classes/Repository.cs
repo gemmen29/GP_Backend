@@ -6,11 +6,12 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Data.DTOs;
 using Twitter.Repository.Interfaces;
 
 namespace Twitter.Repository.classes
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T> : IRepository<T>  where T : class
     {
         private readonly ApplicationDbContext _context;
         private readonly DbSet<T> _dbSet;
@@ -146,6 +147,18 @@ namespace Twitter.Repository.classes
             var entity = GetById(id);
             if (entity == null) return; // not found; assume already deleted.
             Delete(entity);
+        }
+
+        public virtual int CountEntity()
+        {
+            return _dbSet.Count();
+        }
+        public virtual IEnumerable<T> GetPageRecords(int pageSize, int pageNumber)
+        {
+            pageSize = (pageSize <= 0) ? 10 : pageSize;
+            pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
+
+            return _dbSet.Skip(pageNumber * pageSize).Take(pageSize).ToList();
         }
         #endregion
     }

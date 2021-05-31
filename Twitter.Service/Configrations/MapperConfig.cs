@@ -15,7 +15,7 @@ namespace Twitter.Service.Configrations
         {
             CreateMap<ApplicationUser, UserDetails>().ReverseMap();
             CreateMap<RegisterModel, ApplicationUser>().ReverseMap();
-            CreateMap<UpdateModel, ApplicationUser>().ReverseMap();
+            CreateMap<UpdateUserModel, ApplicationUser>().ReverseMap();
         }
     }
 }

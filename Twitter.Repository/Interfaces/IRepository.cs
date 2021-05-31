@@ -31,5 +31,10 @@ namespace Twitter.Repository.Interfaces
         public void DeleteList(List<T> entityList);
         public void Delete(int id);
         #endregion
+
+        #region Paging
+        public int CountEntity();
+        public IEnumerable<T> GetPageRecords(int pageSize, int pageNumber);
+        #endregion
     }
 }
