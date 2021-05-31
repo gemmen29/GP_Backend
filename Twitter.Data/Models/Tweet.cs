@@ -14,13 +14,16 @@ namespace Twitter.Data.Models
         public int Id { get; set; }
         public string Body { get; set; }
         public string Image { get; set; }
+        public DateTime CreationDate { get; set; }
+
         [JsonIgnore]
         public List<UserLikes> LikedTweets { get; set; }
 
         [JsonIgnore]
         public List<UserBookmarks> BookMarkedTweets { get; set; }
 
-        [InverseProperty("Tweets")]
+        public string AuthorId { get; set; }
+        [JsonIgnore, InverseProperty("Tweets"), ForeignKey("AuthorId")]
         public ApplicationUser Author { get; set; }
 
         [JsonIgnore]

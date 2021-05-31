@@ -8,8 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Twitter.Data.Models;
 using Twitter.Repository;
 using Twitter.Service.Interfaces;
-using PagedList;
-
+using Twitter.Data.DTOs;
 
 namespace Twitter.API.Controllers
 {
@@ -26,31 +25,31 @@ namespace Twitter.API.Controllers
 
         // GET: api/Tweets
         [HttpGet]
-        public ActionResult<IEnumerable<Tweet>> GetTweets(int? page)
+        public ActionResult<IEnumerable<TweetDetails>> GetTweets(int? page)
         {
             int pageNumber = (page ?? 1);
-            return _tweetService.GetTweets().ToPagedList(pageNumber,10).ToList();
+            return _tweetService.GetTweets(10, pageNumber).ToList();
         }
 
         // GET: api/MyTweets
         [HttpGet("MyTweets/{id}")]
-        public ActionResult<IEnumerable<Tweet>> GetMyTweets(string id, int? page)
+        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(string id, int? page)
         {
             int pageNumber = (page ?? 1);
-            return _tweetService.GetMyTweets(id).ToPagedList(pageNumber, 10).ToList();
+            return _tweetService.GetMyTweets(id, 10, pageNumber).ToList();
         }
 
         // GET: api/HomePageTweets
         [HttpGet("HomePageTweets/{id}")]
-        public ActionResult<IEnumerable<Tweet>> GetHomePageTweets(string id, int? page)
+        public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(string id, int? page)
         {
             int pageNumber = (page ?? 1);
-            return _tweetService.GetHomePageTweets(id).ToPagedList(pageNumber, 10).ToList();
+            return _tweetService.GetHomePageTweets(id,10,pageNumber).ToList();
         }
 
         // GET: api/Tweets/5
         [HttpGet("{id}")]
-        public ActionResult<Tweet> GetTweet(int id)
+        public ActionResult<TweetDetails> GetTweet(int id)
         {
             var tweet = this._tweetService.GetTweet(id);
 
@@ -65,40 +64,38 @@ namespace Twitter.API.Controllers
         // POST: api/Tweets
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Tweet>> PostTweet(string authorId, Tweet tweet)
+        public IActionResult PostTweet(AddTweetModel addTweetModel)
         {
-            await this._tweetService.PostTweet(authorId, tweet);
+            this._tweetService.PostTweet(addTweetModel);
 
-            return CreatedAtAction("GetTweet", new { id = tweet.Id }, tweet);
+            //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
+            return NoContent();
         }
 
         // POST: api/ReplyToTweet
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("ReplyToTweet/{id}")]
-        public async Task<ActionResult<Tweet>> PostReplyToTweet(int id, string authorId, Tweet tweet)
+        public IActionResult PostReplyToTweet(int id, AddTweetModel addTweetModel)
         {
-            return CreatedAtAction("GetTweet", new { id = tweet.Id }, await this._tweetService.PostReplyToTweet(id, authorId, tweet));
+            this._tweetService.PostReplyToTweet(id, addTweetModel);
+            //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id }, addTweetModel);
+            return NoContent();
         }
 
         // GET: api/TweetReplies
         [HttpGet("TweetReplies/{id}")]
-        public ActionResult<IEnumerable<Tweet>> GetTweetReplies(int id)
+        public ActionResult<IEnumerable<TweetDetails>> GetTweetReplies(int id)
         {
             return this._tweetService.GetTweetReplies(id).ToList();
         }
 
         // DELETE: api/Tweets/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTweet(int id)
+        public IActionResult DeleteTweet(int id)
         {
-            if(await _tweetService.DeleteTweet(id))
-            {
-                return NoContent();
-            }
-            else
-            {
-                return NotFound();
-            }
+            _tweetService.DeleteTweet(id);
+            return NoContent();
+            
         }
 
         private bool TweetExists(int id)

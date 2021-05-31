@@ -3,20 +3,22 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Data.DTOs;
 using Twitter.Data.Models;
 
 namespace Twitter.Service.Interfaces
 {
     public interface ITweetService
     {
-        IEnumerable<Tweet> GetTweets();
-        IEnumerable<Tweet> GetMyTweets(string id);
-        IEnumerable<Tweet> GetHomePageTweets(string id);
-        Tweet GetTweet(int id);
-        Task<Tweet> PostTweet(string authorId, Tweet tweet);
-        Task<Tweet> PostReplyToTweet(int id, string authorId, Tweet tweet);
-        IEnumerable<Tweet> GetTweetReplies(int id);
-        Task<bool> DeleteTweet(int id);
+        IEnumerable<TweetDetails> GetTweets(int pageSize, int pageNumber);
+        public int GetTweetsCount();
+        IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber);
+        IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber);
+        TweetDetails GetTweet(int id);
+        TweetDetails PostTweet(AddTweetModel tweet);
+        TweetDetails PostReplyToTweet(int id, AddTweetModel tweet);
+        IEnumerable<TweetDetails> GetTweetReplies(int id);
+        void DeleteTweet(int id);
         bool TweetExists(int id);
     }
 }

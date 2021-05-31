@@ -278,11 +278,9 @@ namespace Twitter.Service.Classes
             var userDetails = new UserDetails();
             if (user is null)
             {
-                userDetails.Message = "Email is incorrect!";
-                return userDetails;
+                return null;
             }
             Mapper.Map(user, userDetails);
-            userDetails.Message = "User Returned Successfully";
             return userDetails;
         }
 
@@ -290,6 +288,12 @@ namespace Twitter.Service.Classes
         {
 
             ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            if(user is null) {
+                return new AuthModel
+                {
+                    Message = "Not User With this User Name"
+                };
+            }
             Mapper.Map(model, user);
 
             //Register the user using UserManager
@@ -302,7 +306,7 @@ namespace Twitter.Service.Classes
                 var errors = string.Empty;
 
                 foreach (var error in result.Errors)
-                    errors += $"{error.Description},";
+                    errors += $"{error.Description}";
 
                 return new AuthModel { Message = errors };
             }

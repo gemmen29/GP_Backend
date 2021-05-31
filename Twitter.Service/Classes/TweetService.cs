@@ -1,115 +1,85 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using AutoMapper;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.Data.DTOs;
 using Twitter.Data.Models;
 using Twitter.Repository;
 using Twitter.Repository.classes;
+using Twitter.Repository.Interfaces;
 using Twitter.Service.Interfaces;
 
 namespace Twitter.Service.Classes
 {
-    public class TweetService : Repository<Tweet> , ITweetService 
+    public class TweetService : BaseService, ITweetService
     {
-        private readonly ApplicationDbContext _context;
+        private ITweetRepository _tweetRepository { get; }
 
-        public TweetService(ApplicationDbContext context) : base(context)
+        public TweetService(ITweetRepository tweetRepository, IMapper mapper): base(mapper)
         {
-            this._context = context;
+            _tweetRepository = tweetRepository;
+        }
+        public void DeleteTweet(int id)
+        {
+            _tweetRepository.DeleteTweet(id);
         }
 
-        public async Task<bool> DeleteTweet(int id)
+        public TweetDetails GetTweet(int id)
         {
-            var tweet = GetById(id);
-            if (tweet == null)
-            {
-                return false;
-            }
-
-            Delete(id);
-            await _context.SaveChangesAsync();
-
-            return true;
+            var tweet = _tweetRepository.GetTweet(id);
+            return Mapper.Map<TweetDetails>(tweet);
         }
 
-        public Tweet GetTweet(int id)
+        public IEnumerable<TweetDetails> GetTweetReplies(int id)
         {
-            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).FirstOrDefault();
+            var tweets = _tweetRepository.GetTweetReplies(id);
+            return Mapper.Map<TweetDetails[]>(tweets);
         }
 
-        public IEnumerable<Tweet> GetTweetReplies(int id)
+        public IEnumerable<TweetDetails> GetTweets(int pageSize, int pageNumber)
         {
-            var replies = _context.Reply.Where(r => r.TweetId == id).ToList();
-            List<Tweet> tweets = new List<Tweet>();
-
-            foreach (var reply in replies)
-            {
-                var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).FirstOrDefault();
-                tweets.Add(tweet);
-            }
-            return tweets;
+            var tweets= _tweetRepository.GetTweets(pageSize, pageNumber);
+            return Mapper.Map<TweetDetails[]>(tweets);
         }
 
-        public IEnumerable<Tweet> GetTweets()
+        public int GetTweetsCount()
         {
-            return _context.Tweet.Include(t => t.Author);
+            return _tweetRepository.GetTweetsCount();
         }
 
-        public IEnumerable<Tweet> GetMyTweets(string id)
+        public IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber)
         {
-            ApplicationUser author = _context.Users.Where(u => u.Id == id).FirstOrDefault();
-            return _context.Tweet.Where(t => t.Author == author);
+            var tweets = _tweetRepository.GetMyTweets(id, pageSize, pageNumber);
+            return Mapper.Map<TweetDetails[]>(tweets);
         }
 
-        public IEnumerable<Tweet> GetHomePageTweets(string id)
+        public IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber)
         {
-            var followings = _context.Following.Where(f => f.FollowerId == id).Select(f => f.FollowingUser).ToList();
-            var tweets = new List<Tweet>();
-            
-            foreach(var following in followings)
-            {
-                tweets.AddRange(_context.Tweet.Where(t => t.Author == following).ToList());
-            }
-            
-            ApplicationUser author = _context.Users.Where(u => u.Id == id).FirstOrDefault();
-            tweets.AddRange(_context.Tweet.Where(t => t.Author == author).ToList());
-
-            return tweets;
+            var tweets = _tweetRepository.GetHomePageTweets(id, pageSize, pageNumber);
+            return Mapper.Map<TweetDetails[]>(tweets);
         }
 
-        public async Task<Tweet> PostReplyToTweet(int id, string authorId, Tweet tweet)
+        public TweetDetails PostReplyToTweet(int id, AddTweetModel addTweetModel)
         {
-            ApplicationUser author = _context.Users.Where(u => u.Id == authorId).FirstOrDefault();
-            tweet.Author = author;
-            Insert(tweet);
-            await _context.SaveChangesAsync();
-
-            Reply reply = new Reply() { TweetId = id, ReplyId = tweet.Id };
-            _context.Reply.Add(reply);
-            await _context.SaveChangesAsync();
-
-            return tweet;
+            var tweetModel = Mapper.Map<Tweet>(addTweetModel);
+            Tweet tweet = _tweetRepository.PostReplyToTweet(id, tweetModel).Result;
+            return Mapper.Map<TweetDetails>(tweet);
         }
 
-        public async Task<Tweet> PostTweet(string authorId, Tweet tweet)
+        public TweetDetails PostTweet(AddTweetModel addTweetModel)
         {
-            ApplicationUser author = _context.Users.Where(u => u.Id == authorId).FirstOrDefault();
-            tweet.Author = author;
-            Insert(tweet);
-            await _context.SaveChangesAsync();
-
-            return tweet;
+            var tweetModel = Mapper.Map<Tweet>(addTweetModel);
+            Tweet tweet =  _tweetRepository.PostTweet(tweetModel).Result;
+            return Mapper.Map<TweetDetails>(tweet);
         }
 
         public bool TweetExists(int id)
         {
-            Tweet tweet = GetById(id);
-            if (tweet == null)
-                return false;
-            else
-                return true;
+            return _tweetRepository.TweetExists(id);
         }
+
     }
 }

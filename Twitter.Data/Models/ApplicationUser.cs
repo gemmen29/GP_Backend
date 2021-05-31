@@ -17,6 +17,8 @@ namespace Twitter.Data.Models
         [Required, MaxLength(50)]
         public string LastName { get; set; }
 
+        public string UserPic { get; set; }
+
         [JsonIgnore , InverseProperty("FollowingUser")]
         public List<Following> Followers { get; set; }
 

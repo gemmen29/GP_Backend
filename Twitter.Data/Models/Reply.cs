@@ -12,7 +12,6 @@ namespace Twitter.Data.Models
     {
         public int TweetId { get; set; }
 
-        
         [JsonIgnore, ForeignKey("ReplyId")]
         public Tweet Tweet { get; set; }
 

@@ -68,6 +68,7 @@ namespace Twitter.Repository.classes
 
 
         #endregion
+
         #region Get one record
         public virtual T GetById(int id)
         {
@@ -80,6 +81,7 @@ namespace Twitter.Repository.classes
         }
 
         #endregion
+
         #region CRUD Methods
         public virtual bool Insert(T entity)
         {
@@ -149,6 +151,10 @@ namespace Twitter.Repository.classes
             Delete(entity);
         }
 
+
+        #endregion
+
+        #region Paging
         public virtual int CountEntity()
         {
             return _dbSet.Count();
@@ -160,6 +166,7 @@ namespace Twitter.Repository.classes
 
             return _dbSet.Skip(pageNumber * pageSize).Take(pageSize).ToList();
         }
+
         #endregion
     }
 }
