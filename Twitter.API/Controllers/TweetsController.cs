@@ -9,6 +9,7 @@ using Twitter.Data.Models;
 using Twitter.Repository;
 using Twitter.Service.Interfaces;
 using Twitter.Data.DTOs;
+using System.Security.Claims;
 
 namespace Twitter.API.Controllers
 {
@@ -17,10 +18,12 @@ namespace Twitter.API.Controllers
     public class TweetsController : ControllerBase
     {
         private readonly ITweetService _tweetService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public TweetsController(ITweetService tweetService)
+        public TweetsController(ITweetService tweetService, IHttpContextAccessor httpContextAccessor)
         {
             _tweetService = tweetService;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         // GET: api/Tweets
@@ -32,19 +35,21 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/MyTweets
-        [HttpGet("MyTweets/{id}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(string id, int? page)
+        [HttpGet("MyTweets/{page}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(int? page)
         {
             int pageNumber = (page ?? 1);
-            return _tweetService.GetMyTweets(id, 10, pageNumber).ToList();
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _tweetService.GetMyTweets(userID, 10, pageNumber).ToList();
         }
 
         // GET: api/HomePageTweets
-        [HttpGet("HomePageTweets/{id}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(string id, int? page)
+        [HttpGet("HomePageTweets/{page}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? page)
         {
             int pageNumber = (page ?? 1);
-            return _tweetService.GetHomePageTweets(id,10,pageNumber).ToList();
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _tweetService.GetHomePageTweets(userID, 10,pageNumber).ToList();
         }
 
         // GET: api/Tweets/5
@@ -66,6 +71,8 @@ namespace Twitter.API.Controllers
         [HttpPost]
         public IActionResult PostTweet(AddTweetModel addTweetModel)
         {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            addTweetModel.AuthorId = userID;
             this._tweetService.PostTweet(addTweetModel);
 
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
@@ -77,6 +84,8 @@ namespace Twitter.API.Controllers
         [HttpPost("ReplyToTweet/{id}")]
         public IActionResult PostReplyToTweet(int id, AddTweetModel addTweetModel)
         {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            addTweetModel.AuthorId = userID;
             this._tweetService.PostReplyToTweet(id, addTweetModel);
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id }, addTweetModel);
             return NoContent();
