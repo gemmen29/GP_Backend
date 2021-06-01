@@ -68,7 +68,13 @@ namespace Twitter.Repository.Classes
 
             pageSize = (pageSize <= 0) ? 10 : pageSize;
             pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
-            return _context.Tweet.Where(t => followingIds.Contains(t.AuthorId)).OrderByDescending(t => t.CreationDate).Skip(pageNumber * pageSize).Take(pageSize).Include(t => t.Author).ToList();
+
+            return 
+                _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
+                .OrderByDescending(t => t.CreationDate)
+                .Skip(pageNumber * pageSize).Take(pageSize)
+                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets)
+                .ToList();
             
         }
 
