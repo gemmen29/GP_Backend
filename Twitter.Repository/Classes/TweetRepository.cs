@@ -74,8 +74,6 @@ namespace Twitter.Repository.Classes
 
         public async Task<Tweet> PostReplyToTweet(int id, Tweet tweet)
         {
-            //ApplicationUser author = _context.Users.FirstOrDefault(u => u.Id == authorId);
-            //tweet.Author = author;
             Insert(tweet);
             await _context.SaveChangesAsync();
 
@@ -88,9 +86,6 @@ namespace Twitter.Repository.Classes
 
         public async Task<Tweet> PostTweet(Tweet tweet)
         {
-            //ApplicationUser author = _context.Users.FirstOrDefault(u => u.Id == authorId);
-            //tweet.Author = author;
-
             Insert(tweet);
             await _context.SaveChangesAsync();
 

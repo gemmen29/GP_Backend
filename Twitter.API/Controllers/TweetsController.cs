@@ -44,16 +44,17 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/HomePageTweets
-        [HttpGet("HomePageTweets/{page}")]
+        [HttpGet("HomePageTweets")]
         public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? page)
         {
             int pageNumber = (page ?? 1);
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            
             return _tweetService.GetHomePageTweets(userID, 10,pageNumber).ToList();
         }
 
         // GET: api/Tweets/5
-        [HttpGet("{id}")]
+        [HttpGet("{id:int}")]
         public ActionResult<TweetDetails> GetTweet(int id)
         {
             var tweet = this._tweetService.GetTweet(id);
@@ -81,7 +82,7 @@ namespace Twitter.API.Controllers
 
         // POST: api/ReplyToTweet
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost("ReplyToTweet/{id}")]
+        [HttpPost("ReplyToTweet/{id:int}")]
         public IActionResult PostReplyToTweet(int id, AddTweetModel addTweetModel)
         {
             var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
@@ -92,14 +93,14 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/TweetReplies
-        [HttpGet("TweetReplies/{id}")]
+        [HttpGet("TweetReplies/{id:int}")]
         public ActionResult<IEnumerable<TweetDetails>> GetTweetReplies(int id)
         {
             return this._tweetService.GetTweetReplies(id).ToList();
         }
 
         // DELETE: api/Tweets/5
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:int}")]
         public IActionResult DeleteTweet(int id)
         {
             _tweetService.DeleteTweet(id);
