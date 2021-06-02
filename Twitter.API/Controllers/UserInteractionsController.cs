@@ -49,7 +49,7 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet]
+        [HttpGet("/user/following")]
         public ActionResult<IEnumerable<FollowingDetails>> GetFollowing()
         {
             //var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
