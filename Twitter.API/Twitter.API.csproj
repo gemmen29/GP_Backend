@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Twitter.Service\Twitter.Service.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Resources\Images\" />
+  </ItemGroup>
+
 </Project>
