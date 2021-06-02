@@ -27,6 +27,11 @@ namespace Twitter.Service.Configrations
                 )
                 .ReverseMap();
             CreateMap<Tweet, AddTweetModel>().ReverseMap();
+            CreateMap<ApplicationUser, FollowingDetails>()
+                .ForMember(
+                    dest => dest.FullName,
+                    opt => opt.MapFrom(src => src.FirstName+" "+src.LastName)
+                ).ReverseMap();
         }
     }
 }

@@ -53,7 +53,9 @@ namespace Twitter.API
             services.AddScoped<IAuthService, AuthService>();
             services.AddScoped<IMailService, SendGridMailService>();
             services.AddScoped<ITweetService, TweetService>();
+            services.AddScoped<IUserInteractionService, UserInteractionService>();
             services.AddScoped<ITweetRepository, TweetRepository>();
+            services.AddScoped<IUserInteractionRepository, UserInteractionRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             //services.AddScoped(typeof(ISearch<>), typeof(SearchUserRepository));
             services.AddScoped<ISearch<ApplicationUser>, SearchUserRepository>();
