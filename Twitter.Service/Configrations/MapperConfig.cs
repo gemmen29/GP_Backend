@@ -16,7 +16,16 @@ namespace Twitter.Service.Configrations
             CreateMap<ApplicationUser, UserDetails>().ReverseMap();
             CreateMap<RegisterModel, ApplicationUser>().ReverseMap();
             CreateMap<UpdateUserModel, ApplicationUser>().ReverseMap();
-            CreateMap<Tweet, TweetDetails>().ReverseMap();
+            CreateMap<Tweet, TweetDetails>()
+                .ForMember(
+                    dest => dest.LikeCount,
+                    opt => opt.MapFrom(src => src.LikedTweets.Count)
+                )
+                .ForMember(
+                    dest => dest.ReplyCount,
+                    opt => opt.MapFrom(src => src.Replies.Count)
+                )
+                .ReverseMap();
             CreateMap<Tweet, AddTweetModel>().ReverseMap();
         }
     }

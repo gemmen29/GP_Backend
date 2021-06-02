@@ -12,6 +12,8 @@ namespace Twitter.Data.DTOs
         public string Body { get; set; }
         public string Image { get; set; }
         public DateTime CreationDate { get; set; }
+        public int LikeCount { get; set; }
+        public int ReplyCount { get; set; }
         public UserDetails Author { get; set; }
 
     }
