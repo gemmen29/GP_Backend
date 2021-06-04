@@ -243,6 +243,26 @@ namespace Twitter.Repository.Migrations
                     b.ToTable("Following");
                 });
 
+            modelBuilder.Entity("Twitter.Data.Models.Image", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("ImageName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TweetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId");
+
+                    b.ToTable("Image");
+                });
+
             modelBuilder.Entity("Twitter.Data.Models.Reply", b =>
                 {
                     b.Property<int>("TweetId")
@@ -274,9 +294,6 @@ namespace Twitter.Repository.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -313,6 +330,27 @@ namespace Twitter.Repository.Migrations
                     b.HasIndex("TweetId");
 
                     b.ToTable("UserLikes");
+                });
+
+            modelBuilder.Entity("Twitter.Data.Models.Video", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("TweetId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("VideoName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("TweetId")
+                        .IsUnique();
+
+                    b.ToTable("Video");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -385,6 +423,17 @@ namespace Twitter.Repository.Migrations
                     b.Navigation("FollowingUser");
                 });
 
+            modelBuilder.Entity("Twitter.Data.Models.Image", b =>
+                {
+                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
+                        .WithMany("Images")
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tweet");
+                });
+
             modelBuilder.Entity("Twitter.Data.Models.Reply", b =>
                 {
                     b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
@@ -451,6 +500,17 @@ namespace Twitter.Repository.Migrations
                     b.Navigation("Tweet");
                 });
 
+            modelBuilder.Entity("Twitter.Data.Models.Video", b =>
+                {
+                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
+                        .WithOne("Video")
+                        .HasForeignKey("Twitter.Data.Models.Video", "TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Tweet");
+                });
+
             modelBuilder.Entity("Twitter.Data.Models.ApplicationUser", b =>
                 {
                     b.Navigation("BookMarks");
@@ -468,11 +528,15 @@ namespace Twitter.Repository.Migrations
                 {
                     b.Navigation("BookMarkedTweets");
 
+                    b.Navigation("Images");
+
                     b.Navigation("LikedTweets");
 
                     b.Navigation("Replies");
 
                     b.Navigation("RespondedTweet");
+
+                    b.Navigation("Video");
                 });
 #pragma warning restore 612, 618
         }

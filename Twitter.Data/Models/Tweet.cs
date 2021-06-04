@@ -13,7 +13,8 @@ namespace Twitter.Data.Models
     {
         public int Id { get; set; }
         public string Body { get; set; }
-        public string Image { get; set; }
+        public List<Image> Images { get; set; }
+        public Video Video { get; set; }
         public DateTime CreationDate { get; set; }
 
         [JsonIgnore]

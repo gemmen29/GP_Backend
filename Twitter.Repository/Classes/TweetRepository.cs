@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using EFCore.BulkExtensions;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -22,7 +23,7 @@ namespace Twitter.Repository.Classes
 
         public Tweet GetTweet(int id)
         {
-            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).FirstOrDefault();
+            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
         }
 
         public IEnumerable<Tweet> GetTweetReplies(int id)
@@ -32,7 +33,7 @@ namespace Twitter.Repository.Classes
 
             foreach (var reply in replies)
             {
-                var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).FirstOrDefault();
+                var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
                 tweets.Add(tweet);
             }
             return tweets;
@@ -43,7 +44,7 @@ namespace Twitter.Repository.Classes
             pageSize = (pageSize <= 0) ? 10 : pageSize;
             pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
 
-            return _context.Tweet.Skip(pageNumber * pageSize).Take(pageSize).Include(t => t.Author).ToList();
+            return _context.Tweet.Skip(pageNumber * pageSize).Take(pageSize).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).ToList();
         }
 
         public int GetTweetsCount()
@@ -56,7 +57,7 @@ namespace Twitter.Repository.Classes
             pageSize = (pageSize <= 0) ? 10 : pageSize;
             pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
 
-            return _context.Tweet.Where(t => t.AuthorId == id).Skip(pageNumber * pageSize).Take(pageSize).Include(t=>t.Author).ToList();
+            return _context.Tweet.Where(t => t.AuthorId == id).Skip(pageNumber * pageSize).Take(pageSize).Include(t=>t.Author).Include(t => t.Images).Include(t => t.Video).ToList();
         }
 
         public IEnumerable<Tweet> GetHomePageTweets(string id, int pageSize, int pageNumber)
@@ -73,7 +74,7 @@ namespace Twitter.Repository.Classes
                 _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
                 .OrderByDescending(t => t.CreationDate)
                 .Skip(pageNumber * pageSize).Take(pageSize)
-                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets)
+                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.Images).Include(t => t.Video)
                 .ToList();
             
         }
@@ -92,6 +93,7 @@ namespace Twitter.Repository.Classes
 
         public async Task<Tweet> PostTweet(Tweet tweet)
         {
+            //await _context.BulkInsertAsync(new List<Tweet>() { tweet});
             Insert(tweet);
             await _context.SaveChangesAsync();
 

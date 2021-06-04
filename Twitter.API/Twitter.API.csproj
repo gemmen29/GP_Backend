@@ -27,6 +27,7 @@
 
   <ItemGroup>
     <Folder Include="Resources\Images\" />
+    <Folder Include="Resources\Videos\" />
   </ItemGroup>
 
 </Project>

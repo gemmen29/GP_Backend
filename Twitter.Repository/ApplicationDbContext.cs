@@ -45,6 +45,10 @@ namespace Twitter.Repository
                 .OnDelete(DeleteBehavior.Restrict);
             modelBuilder.Entity<Reply>()
                 .HasKey(r => new { r.TweetId, r.ReplyId});
+            modelBuilder.Entity<Image>()
+                .HasKey(m => m.Id );
+            modelBuilder.Entity<Video>()
+                .HasKey(v => v.Id );
         }
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
