@@ -27,6 +27,7 @@ namespace Twitter.Service.Configrations
                 )
                 .ReverseMap();
             CreateMap<Tweet, AddTweetModel>().ReverseMap();
+            CreateMap<Tweet, TweetWithReplies>().ReverseMap();
             CreateMap<ApplicationUser, FollowingDetails>()
                 .ForMember(
                     dest => dest.FullName,

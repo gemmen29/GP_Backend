@@ -27,10 +27,10 @@ namespace Twitter.Service.Classes
             _tweetRepository.DeleteTweet(id);
         }
 
-        public TweetDetails GetTweet(int id)
+        public TweetWithReplies GetTweet(int id)
         {
             var tweet = _tweetRepository.GetTweet(id);
-            return Mapper.Map<TweetDetails>(tweet);
+            return Mapper.Map<TweetWithReplies>(tweet);
         }
 
         public IEnumerable<TweetDetails> GetTweetReplies(int id)

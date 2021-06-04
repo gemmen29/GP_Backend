@@ -55,7 +55,7 @@ namespace Twitter.API.Controllers
 
         // GET: api/Tweets/5
         [HttpGet("{id:int}")]
-        public ActionResult<TweetDetails> GetTweet(int id)
+        public ActionResult<TweetWithReplies> GetTweet(int id)
         {
             var tweet = this._tweetService.GetTweet(id);
 

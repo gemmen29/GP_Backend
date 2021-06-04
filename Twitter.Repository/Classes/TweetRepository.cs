@@ -23,7 +23,7 @@ namespace Twitter.Repository.Classes
 
         public Tweet GetTweet(int id)
         {
-            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
+            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).Include(t => t.Replies).FirstOrDefault();
         }
 
         public IEnumerable<Tweet> GetTweetReplies(int id)
