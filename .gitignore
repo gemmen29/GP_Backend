@@ -339,7 +339,7 @@ ASALocalRun/
 # BeatPulse healthcheck temp database
 healthchecksdb
 
-Resources/Images/*
-Resources/Videos/*
+Resources/Images/
+Resources/Videos/
 !Resources/Images/.gitkeep
 !Resources/Videos/.gitkeep
