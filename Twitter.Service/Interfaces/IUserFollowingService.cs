@@ -8,11 +8,10 @@ using Twitter.Data.Models;
 
 namespace Twitter.Service.Interfaces
 {
-    public interface IUserInteractionService
+    public interface IUserFollowingService
     {
         public void Follow(Following following);
         public void UnFollow(Following following);
-        public List<FollowingDetails> GetFollowing(string userId);
-
+        public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId);
     }
 }

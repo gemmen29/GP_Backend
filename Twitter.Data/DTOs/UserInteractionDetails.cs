@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Twitter.Data.DTOs
 {
-    public class FollowingDetails
+    public class UserInteractionDetails
     {
         public string FullName { get; set; }
         public string Username { get; set; }

@@ -9,6 +9,7 @@ namespace Twitter.Repository.Interfaces
 {
     public interface IRepository<T> where T : class
     {
+        public void Commit();
         #region Get All Data Methods
         public IQueryable<T> GetAll();
         public IQueryable<T> GetAllSorted<TKey>(Expression<Func<T, TKey>> sortingExpression);
@@ -35,6 +36,8 @@ namespace Twitter.Repository.Interfaces
         #region Paging
         public int CountEntity();
         public IEnumerable<T> GetPageRecords(int pageSize, int pageNumber);
+        public IEnumerable<T> GetPageRecordsWhere(int pageSize, int pageNumber, System.Linq.Expressions.Expression<Func<T, bool>> filter = null, string includeProperties = "");
+        public int CountEntityWhere(System.Linq.Expressions.Expression<Func<T, bool>> filter = null);
         #endregion
     }
 }

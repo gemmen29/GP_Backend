@@ -15,34 +15,43 @@ namespace Twitter.API.Controllers
     [ApiController]
     public class UserInteractionsController : ControllerBase
     {
-        private readonly IUserInteractionService _userInteractionService ;
+        private readonly IUserFollowingService _userFollowingService ;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAuthService _authService;
+        private readonly IUserLikesService _userLikesService;
+        private readonly IUserBookmarksService _userBookmarksService;
 
-        public UserInteractionsController(IUserInteractionService userInteractionService, IHttpContextAccessor httpContextAccessor)
+        public UserInteractionsController(
+            IUserFollowingService userFollowingService,
+            IHttpContextAccessor httpContextAccessor,
+            IAuthService authService,
+            IUserLikesService userLikesService,
+            IUserBookmarksService userBookmarksService
+            )
         {
-            _userInteractionService = userInteractionService;
+            _userFollowingService = userFollowingService;
             _httpContextAccessor = httpContextAccessor;
+            _authService = authService;
+            _userLikesService = userLikesService;
+            _userBookmarksService = userBookmarksService;
         }
 
-        [HttpPost("/user/follow/{followingId}")]
-        public IActionResult Follow(string followingId)
+        [HttpPost("/user/follow/{followingUserName}")]
+        public IActionResult Follow(string followingUserName)
         {
-            var userID = "189180df-f7f4-4782-947a-351dd83d0668";
-
-            //var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _userInteractionService.Follow(new Following() { FollowerId = userID, FollowingId = followingId });
-
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
+            _userFollowingService.Follow(following);
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
             return NoContent();
         }
 
-        [HttpPost("/user/unfollow/{followingId}")]
-        public IActionResult UnFollow(string followingId)
+        [HttpPost("/user/unfollow/{followingUserName}")]
+        public IActionResult UnFollow(string followingUserName)
         {
-            var userID = "189180df-f7f4-4782-947a-351dd83d0668";
-
-            //var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            _userInteractionService.UnFollow(new Following() { FollowerId = userID, FollowingId = followingId });
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
+            _userFollowingService.UnFollow(following);
 
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
             return NoContent();
@@ -50,14 +59,74 @@ namespace Twitter.API.Controllers
 
 
         [HttpGet("/user/following")]
-        public ActionResult<IEnumerable<FollowingDetails>> GetFollowing()
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var userID = "189180df-f7f4-4782-947a-351dd83d0668";
-            return _userInteractionService.GetFollowing(userID).ToList();
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+        }
+
+        [HttpPost("/tweet/like/{tweetId}")]
+        public IActionResult Like(int tweetId)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userLikes = new UserLikes { UserId = userID, TweetId = tweetId };
+            _userLikesService.Like(userLikes);
+            return NoContent();
+        }
+
+        [HttpPost("/tweet/dislike/{tweetId}")]
+        public IActionResult DisLike(int tweetId)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userLikes = new UserLikes { UserId = userID, TweetId = tweetId };
+            _userLikesService.DisLike(userLikes);
+            return NoContent();
+        }
+
+        [HttpGet("/tweet/mylike")]
+        public ActionResult<IEnumerable<TweetDetails>> GetMyLikes(int? pageSize, int? pageNumber)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+        }
+
+        [HttpGet("/tweet/tweetlikes/{tweetId}")]
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetTweetLikes(int? pageSize, int? pageNumber, int tweetId)
+        {
+            return _userLikesService.GetTweetLikes(pageSize ?? 10, pageNumber ?? 1, tweetId).ToList();
         }
 
 
+        [HttpPost("/tweet/bookmark/{tweetId}")]
+        public IActionResult Bookmark(int tweetId)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userBookmarks = new UserBookmarks { UserId = userID, TweetId = tweetId };
+            _userBookmarksService.BookMark(userBookmarks);
+            return NoContent();
+        }
 
+        [HttpPost("/tweet/removebookmark/{tweetId}")]
+        public IActionResult RemoveBookmark(int tweetId)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userBookmarks = new UserBookmarks { UserId = userID, TweetId = tweetId };
+            _userBookmarksService.RemoveBookMark(userBookmarks);
+            return NoContent();
+        }
+
+
+        [HttpGet("/tweet/mybookmark")]
+        public ActionResult<IEnumerable<TweetDetails>> GetMyBookmarks(int? pageSize, int? pageNumber)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+        }
+
+        [HttpGet("/tweet/tweetbookmarks/{tweetId}")]
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetTweetBookmarks(int? pageSize, int? pageNumber, int tweetId)
+        {
+            return _userBookmarksService.GetTweetBookmarks(pageSize ?? 10, pageNumber ?? 1, tweetId).ToList();
+        }
     }
 }
