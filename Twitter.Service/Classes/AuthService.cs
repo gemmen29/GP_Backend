@@ -315,5 +315,17 @@ namespace Twitter.Service.Classes
                 IsAuthenticated = true,
                 Message = "Updated Successfully!" };
         }
+
+        public async Task<string> GetUserID(string userName)
+        {
+            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            if (user is null)
+            {
+                return String.Empty;
+            }
+            return user.Id;
+        }
+
+
     }
 }

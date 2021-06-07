@@ -20,6 +20,12 @@ namespace Twitter.Repository.classes
             _context = context;
             _dbSet = _context.Set<T>();
         }
+
+        public void Commit()
+        {
+            _context.SaveChanges();
+        }
+
         #region Get All Data Methods
         public virtual IQueryable<T> GetAll()
         {
@@ -167,6 +173,19 @@ namespace Twitter.Repository.classes
             return _dbSet.Skip(pageNumber * pageSize).Take(pageSize).ToList();
         }
 
+        public virtual IEnumerable<T> GetPageRecordsWhere(int pageSize, int pageNumber,System.Linq.Expressions.Expression<Func<T, bool>> filter = null, string includeProperties = "")
+        {
+            IQueryable<T> query = GetWhere(filter, includeProperties);
+
+            pageSize = (pageSize <= 0) ? 10 : pageSize;
+            pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
+
+            return query.Skip(pageNumber * pageSize).Take(pageSize).ToList();
+        }
+        public virtual int CountEntityWhere(System.Linq.Expressions.Expression<Func<T, bool>> filter = null)
+        {
+            return GetWhere(filter).Count();
+        }
         #endregion
     }
 }

@@ -17,5 +17,7 @@ namespace Twitter.Service.Interfaces
         Task<AuthModel> ResetPasswordAsync(ResetPasswordModel model);
         Task<UserDetails> GetCurrentUser(string email);
         Task<AuthModel> UpdateAsync(string userName, UpdateUserModel model);
+        Task<string> GetUserID(string userName);
+
     }
 }

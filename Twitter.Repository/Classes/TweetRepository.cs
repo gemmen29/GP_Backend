@@ -1,5 +1,4 @@
-﻿using EFCore.BulkExtensions;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,6 @@ namespace Twitter.Repository.Classes
             this._context = context;
         }
        
-
         public Tweet GetTweet(int id)
         {
             return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).Include(t => t.Replies).ThenInclude(r => r.Tweet).FirstOrDefault();
