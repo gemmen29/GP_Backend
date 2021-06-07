@@ -26,8 +26,44 @@ namespace Twitter.Service.Configrations
                     opt => opt.MapFrom(src => src.Replies.Count)
                 )
                 .ReverseMap();
+
             CreateMap<Tweet, AddTweetModel>().ReverseMap();
+
+            CreateMap<Reply, TweetDetails>()
+                .ForMember(
+                dest => dest.Author,
+                opt => opt.MapFrom(src => src.Tweet.Author)
+                )
+                .ForMember(
+                dest => dest.Body,
+                opt => opt.MapFrom(src => src.Tweet.Body)
+                )
+                .ForMember(
+                dest => dest.CreationDate,
+                opt => opt.MapFrom(src => src.Tweet.CreationDate)
+                )
+                .ForMember(
+                dest => dest.Id,
+                opt => opt.MapFrom(src => src.Tweet.Id)
+                )
+                .ForMember(
+                dest => dest.Images,
+                opt => opt.MapFrom(src => src.Tweet.Images)
+                )
+                .ForMember(
+                dest => dest.LikeCount,
+                opt => opt.MapFrom(src => src.Tweet.LikedTweets.Count)
+                )
+                .ForMember(
+                dest => dest.ReplyCount,
+                opt => opt.MapFrom(src => src.Tweet.Replies.Count)
+                )
+                .ForMember(
+                dest => dest.Video,
+                opt => opt.MapFrom(src => src.Tweet.Video)
+                ).ReverseMap();
             CreateMap<Tweet, TweetWithReplies>().ReverseMap();
+
             CreateMap<ApplicationUser, FollowingDetails>()
                 .ForMember(
                     dest => dest.FullName,
