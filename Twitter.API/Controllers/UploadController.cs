@@ -63,9 +63,13 @@ namespace Twitter.API.Controllers
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
                     var fullPath = Path.Combine(pathToSave, fileName);
 
-                    using (var stream = new FileStream(fullPath, FileMode.Create))
+                    //using (var stream = new FileStream(fullPath, FileMode.Create))
+                    //{
+                    //    file.CopyTo(stream);
+                    //}
+                    using (var stream = System.IO.File.Create(fullPath))
                     {
-                        file.CopyTo(stream);
+                        await file.CopyToAsync(stream);
                     }
 
                     return Ok(new { fileName });

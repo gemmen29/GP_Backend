@@ -21,20 +21,22 @@ namespace Twitter.Repository.Classes
        
         public Tweet GetTweet(int id)
         {
-            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).Include(t => t.Replies).ThenInclude(r => r.Tweet).FirstOrDefault();
+            return _context.Tweet.Where(t => t.Id == id).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).Include(t => t.Replies).ThenInclude(r => r.Tweet).Include(t => t.Replies).ThenInclude(r => r.Tweet.Images).Include(t => t.Replies).ThenInclude(r => r.Tweet.Video).FirstOrDefault();
         }
 
         public IEnumerable<Tweet> GetTweetReplies(int id)
         {
-            var replies = _context.Reply.Where(r => r.TweetId == id).ToList();
-            List<Tweet> tweets = new List<Tweet>();
+            //var replies = _context.Reply.Where(r => r.TweetId == id).ToList();
+            //List<Tweet> tweets = new List<Tweet>();
 
-            foreach (var reply in replies)
-            {
-                var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
-                tweets.Add(tweet);
-            }
-            return tweets;
+            //foreach (var reply in replies)
+            //{
+            //    var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
+            //    tweets.Add(tweet);
+            //}
+            var replies = _context.Reply.Where(r => r.TweetId == id).Include(r => r.Tweet.Images).Include(r => r.Tweet.Video).Select(u => u.Tweet).ToList();
+
+            return replies;
         }
 
         public IEnumerable<Tweet> GetTweets(int pageSize, int pageNumber)
