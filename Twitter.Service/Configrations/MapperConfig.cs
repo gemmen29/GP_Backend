@@ -27,7 +27,19 @@ namespace Twitter.Service.Configrations
                 )
                 .ReverseMap();
 
-            CreateMap<Tweet, AddTweetModel>().ReverseMap();
+            CreateMap<Video, AddVideoModel>().ReverseMap();
+            CreateMap<Image, AddImageModel>().ReverseMap();
+
+            CreateMap<Tweet, AddTweetModel>()
+                .ForMember(
+                    dest => dest.Images,
+                    opt => opt.MapFrom(src => src.Images)
+                )
+                .ForMember(
+                    dest => dest.Video,
+                    opt => opt.MapFrom(src => src.Video)
+                )
+                .ReverseMap();
 
             CreateMap<Reply, TweetDetails>()
                 .ForMember(

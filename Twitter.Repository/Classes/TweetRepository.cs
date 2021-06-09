@@ -111,6 +111,7 @@ namespace Twitter.Repository.Classes
 
         public async Task DeleteTweet(int id)
         {
+            _context.Reply.RemoveRange(_context.Reply.Where(r => r.TweetId == id || r.ReplyId == id).ToList());
             Delete(id);
             await _context.SaveChangesAsync();
         }
