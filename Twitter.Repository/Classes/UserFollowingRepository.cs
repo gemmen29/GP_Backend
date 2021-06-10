@@ -39,5 +39,10 @@ namespace Twitter.Repository.Classes
             //return _context.Following.Where(u => u.FollowerId == userId).Select(u => u.FollowingUser).ToList(); 
             return GetPageRecordsWhere(pageSize, pageNumber, u => u.FollowerId == userId, "FollowingUser").Select(u => u.FollowingUser).ToList();
         }
+
+        public bool FollowingExists(string userId, string followingId)
+        {
+            return GetFirstOrDefault(f => f.FollowerId == userId && f.FollowingId == followingId) != null ? true : false;
+        }
     }
 }

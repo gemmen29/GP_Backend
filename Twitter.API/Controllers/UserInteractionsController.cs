@@ -36,21 +36,23 @@ namespace Twitter.API.Controllers
             _userBookmarksService = userBookmarksService;
         }
 
-        [HttpPost("/user/follow/{followingUserName}")]
-        public IActionResult Follow(string followingUserName)
+        [HttpPost("/user/follow/{followingId}")]
+        public IActionResult Follow(string followingId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            //var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
+            var following = new Following() { FollowerId = userID, FollowingId = followingId};
             _userFollowingService.Follow(following);
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
             return NoContent();
         }
 
-        [HttpPost("/user/unfollow/{followingUserName}")]
-        public IActionResult UnFollow(string followingUserName)
+        [HttpPost("/user/unfollow/{followingId}")]
+        public IActionResult UnFollow(string followingId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
-            var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var following = new Following() { FollowerId = userID, FollowingId = followingId};
+            //var following = new Following() { FollowerId = userID, FollowingId = _authService.GetUserID(followingUserName).Result };
             _userFollowingService.UnFollow(following);
 
             //return CreatedAtAction("GetTweet", new { id = addTweetModel.Id, addTweetModel);
@@ -61,7 +63,7 @@ namespace Twitter.API.Controllers
         [HttpGet("/user/following")]
         public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 

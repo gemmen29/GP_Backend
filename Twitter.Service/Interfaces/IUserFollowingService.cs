@@ -13,5 +13,6 @@ namespace Twitter.Service.Interfaces
         public void Follow(Following following);
         public void UnFollow(Following following);
         public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId);
+        public bool FollowingExists(string userId, string followingId);
     }
 }

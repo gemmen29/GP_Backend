@@ -16,16 +16,21 @@ namespace Twitter.Service.Classes
 {
     public class TweetService : BaseService, ITweetService
     {
-        private readonly IUserLikesRepository _userLikesRepository;
-        private readonly IUserBookmarksRepository _userBookmarksRepository;
+        private readonly IUserLikesService _userLikesService;
+        private readonly IUserBookmarksService _userBookmarksService;
 
         private ITweetRepository _tweetRepository { get; }
 
-        public TweetService(ITweetRepository tweetRepository, IUserLikesRepository userLikesRepository, IUserBookmarksRepository userBookmarksRepository, IMapper mapper): base(mapper)
+        public TweetService(
+            ITweetRepository tweetRepository,
+            IUserLikesService userLikesService, 
+            IUserBookmarksService userBookmarksService,
+            IMapper mapper
+            ): base(mapper)
         {
             _tweetRepository = tweetRepository;
-            _userLikesRepository = userLikesRepository;
-            _userBookmarksRepository = userBookmarksRepository;
+            _userLikesService = userLikesService;
+            _userBookmarksService = userBookmarksService;
         }
         public void DeleteTweet(int id)
         {
@@ -68,8 +73,8 @@ namespace Twitter.Service.Classes
             var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
             for (int i = 0; i < tweetsDetails.Count(); i++)
             {
-                tweetsDetails[i].IsLiked = _userLikesRepository.LikeExists(id, tweetsDetails[i].Id);
-                tweetsDetails[i].IsBookmarked = _userBookmarksRepository.BookmarkExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(id, tweetsDetails[i].Id);
             }
             return tweetsDetails;
         }

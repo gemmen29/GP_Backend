@@ -14,9 +14,12 @@ namespace Twitter.API.Controllers
     public class SearchController : ControllerBase
     {
         private SearchUserService _searchUserService;
-        public SearchController(SearchUserService searchUserService)
+        private readonly IHttpContextAccessor _httpContextAccessor;
+
+        public SearchController(SearchUserService searchUserService, IHttpContextAccessor httpContextAccessor)
         {
             _searchUserService = searchUserService;
+            _httpContextAccessor = httpContextAccessor;
         }
         [HttpGet("count")]
         public IActionResult NumberOfUsers()
@@ -36,7 +39,8 @@ namespace Twitter.API.Controllers
         [HttpPost("search")]
         public IActionResult GetUsersByPage(SearchModel searchModel)
         {
-            return Ok(_searchUserService.GetPageByKeywords(searchModel));
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return Ok(_searchUserService.GetPageByKeywords(userID, searchModel));
         }
     }
 }

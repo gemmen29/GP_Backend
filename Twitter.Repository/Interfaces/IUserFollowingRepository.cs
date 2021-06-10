@@ -13,6 +13,7 @@ namespace Twitter.Repository.Interfaces
         public void Follow(Following following);
         public void UnFollow(Following following);
         public IEnumerable<ApplicationUser> GetFollowers(int pageSize, int pageNumber, string userId);
+        public bool FollowingExists(string userId, string followingId);
         #endregion
     }
 }

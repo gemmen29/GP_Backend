@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Twitter.Data.DTOs;
 using Twitter.Data.Models;
 using Twitter.Repository.Interfaces;
-
+using Twitter.Service.Interfaces;
 
 namespace Twitter.Service.Classes
 {
@@ -15,13 +15,17 @@ namespace Twitter.Service.Classes
     {
         private IRepository<ApplicationUser> _repository;
         private ISearch<ApplicationUser> _searchRepository;
+        private readonly IUserFollowingService _userFollowingService;
+
         public SearchUserService(
             IRepository<ApplicationUser> repository,
             ISearch<ApplicationUser> searchRepository,
+            IUserFollowingService userFollowingService,
             IMapper mapper) : base(mapper)
         {
             _repository = repository;
             _searchRepository = searchRepository;
+            _userFollowingService = userFollowingService;
         }
 
         public int CountEntity()
@@ -34,12 +38,25 @@ namespace Twitter.Service.Classes
         }
         public IEnumerable<UserDetails> GetPageRecords(int pageSize, int pageNumber)
         {
-            return Mapper.Map<List<UserDetails>>(_repository.GetPageRecords(pageSize, pageNumber));
+            var users = _repository.GetPageRecords(pageSize, pageNumber).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            //for (int i = 0; i < userDetails.Count(); i++)
+            //{
+            //    userDetails[i].IsFollowedByCurrentUser = _userFollowingService.FollowingExists(userId, users[i].Id);
+            //}
+            return userDetails;
         }
 
-        public IEnumerable<UserDetails> GetPageByKeywords(SearchModel searchModel)
+        public IEnumerable<UserDetails> GetPageByKeywords(string userId, SearchModel searchModel)
         {
-            return Mapper.Map<List<UserDetails>>(_searchRepository.GetPageByKeywords(searchModel));
+            // trival solution
+            var users = _searchRepository.GetPageByKeywords(searchModel).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            for (int i = 0; i < userDetails.Count(); i++)
+            {
+                userDetails[i].IsFollowedByCurrentUser = _userFollowingService.FollowingExists(userId,users[i].Id);
+            }
+            return userDetails;
         }
     }
 }

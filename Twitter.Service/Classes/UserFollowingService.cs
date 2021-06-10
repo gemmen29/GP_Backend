@@ -33,5 +33,10 @@ namespace Twitter.Service.Classes
         {
             return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowers(pageSize, pageNumber, userId)).ToList();
         }
+
+        public bool FollowingExists(string userId, string followingId)
+        {
+            return _userFollowingRepository.FollowingExists(userId, followingId);
+        }
     }
 }
