@@ -72,7 +72,6 @@ namespace Twitter.API.Controllers
         [HttpPost]
         public IActionResult PostTweet(AddTweetModel addTweetModel)
         {
-            //var userID = "c732ee53-0cc7-48c2-9079-d5a7d3abc186";
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             addTweetModel.AuthorId = userID;
             this._tweetService.PostTweet(addTweetModel);

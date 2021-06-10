@@ -27,7 +27,11 @@ namespace Twitter.API.Controllers
                 if (file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
+                    string fileExtention = fileName.Substring(fileName.LastIndexOf("."));
+                    string fileNameWithoutExtension = fileName.Substring(0, fileName.IndexOf("."));
+                    string newFileName = fileNameWithoutExtension + DateTime.UtcNow.Ticks + fileExtention;
+
+                    var fullPath = Path.Combine(pathToSave, newFileName);
 
                     using (var stream = new FileStream(fullPath, FileMode.Create))
                     {
@@ -61,12 +65,12 @@ namespace Twitter.API.Controllers
                 if (file.Length > 0)
                 {
                     var fileName = ContentDispositionHeaderValue.Parse(file.ContentDisposition).FileName.Trim('"');
-                    var fullPath = Path.Combine(pathToSave, fileName);
+                    string fileExtention = fileName.Substring(fileName.LastIndexOf("."));
+                    string fileNameWithoutExtension = fileName.Substring(0, fileName.IndexOf("."));
+                    string newFileName = fileNameWithoutExtension + DateTime.UtcNow.Ticks + fileExtention;
 
-                    //using (var stream = new FileStream(fullPath, FileMode.Create))
-                    //{
-                    //    file.CopyTo(stream);
-                    //}
+                    var fullPath = Path.Combine(pathToSave, newFileName);
+
                     using (var stream = System.IO.File.Create(fullPath))
                     {
                         await file.CopyToAsync(stream);
