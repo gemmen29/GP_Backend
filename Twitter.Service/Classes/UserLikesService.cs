@@ -39,5 +39,10 @@ namespace Twitter.Service.Classes
         {
             return Mapper.Map<TweetDetails[]>(_userLikesRepository.GetUserLikedTweets(pageSize, pageNumber,userID)).ToList();
         }
+
+        public bool LikeExists(string userId, int tweetId)
+        {
+            return _userLikesRepository.LikeExists(userId, tweetId);
+        }
     }
 }

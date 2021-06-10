@@ -74,7 +74,7 @@ namespace Twitter.Repository.Classes
                 _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
                 .OrderByDescending(t => t.CreationDate)
                 .Skip(pageNumber * pageSize).Take(pageSize)
-                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.Images).Include(t => t.Video)
+                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
                 .ToList();
             
         }

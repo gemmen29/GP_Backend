@@ -41,5 +41,10 @@ namespace Twitter.Repository.Classes
             Insert(userLikes);
             Commit();
         }
+
+        public bool LikeExists(string userId, int tweetId)
+        {
+           return GetFirstOrDefault(l => l.UserId == userId && l.TweetId == tweetId) != null ? true : false ;
+        }
     }
 }

@@ -50,7 +50,7 @@ namespace Twitter.API.Controllers
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            _mailService.SendEmail(model.Email, "New login", "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
+            //_mailService.SendEmail(model.Email, "New login", "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
 
             return Ok(result);
         }

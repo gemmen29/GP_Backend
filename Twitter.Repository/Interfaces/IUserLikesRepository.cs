@@ -14,6 +14,7 @@ namespace Twitter.Repository.Interfaces
         public void DisLike(UserLikes userLikes);
         public IEnumerable<ApplicationUser> GetTweetLikes(int pageSize, int pageNumber, int TweetID);
         public IEnumerable<Tweet> GetUserLikedTweets(int pageSize, int pageNumber, string userID);
+        public bool LikeExists(string userId, int tweetId);
         #endregion
     }
 }

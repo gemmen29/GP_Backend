@@ -25,6 +25,11 @@ namespace Twitter.Repository.Classes
             Commit();
         }
 
+        public bool BookmarkExists(string userId, int tweetId)
+        {
+            return GetFirstOrDefault(l => l.UserId == userId && l.TweetId == tweetId) != null ? true : false;
+        }
+
         public IEnumerable<ApplicationUser> GetTweetBookmarks(int pageSize, int pageNumber, int TweetID)
         {
             return GetPageRecordsWhere(pageSize, pageNumber, u => u.TweetId == TweetID, "ApplicationUser").Select(u => u.ApplicationUser).ToList();

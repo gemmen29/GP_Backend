@@ -16,11 +16,16 @@ namespace Twitter.Service.Classes
 {
     public class TweetService : BaseService, ITweetService
     {
+        private readonly IUserLikesRepository _userLikesRepository;
+        private readonly IUserBookmarksRepository _userBookmarksRepository;
+
         private ITweetRepository _tweetRepository { get; }
 
-        public TweetService(ITweetRepository tweetRepository, IMapper mapper): base(mapper)
+        public TweetService(ITweetRepository tweetRepository, IUserLikesRepository userLikesRepository, IUserBookmarksRepository userBookmarksRepository, IMapper mapper): base(mapper)
         {
             _tweetRepository = tweetRepository;
+            _userLikesRepository = userLikesRepository;
+            _userBookmarksRepository = userBookmarksRepository;
         }
         public void DeleteTweet(int id)
         {
@@ -59,7 +64,14 @@ namespace Twitter.Service.Classes
         public IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber)
         {
             var tweets = _tweetRepository.GetHomePageTweets(id, pageSize, pageNumber);
-            return Mapper.Map<TweetDetails[]>(tweets);
+            // trival solution
+            var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
+            for (int i = 0; i < tweetsDetails.Count(); i++)
+            {
+                tweetsDetails[i].IsLiked = _userLikesRepository.LikeExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksRepository.BookmarkExists(id, tweetsDetails[i].Id);
+            }
+            return tweetsDetails;
         }
 
         public TweetDetails PostReplyToTweet(int id, AddTweetModel addTweetModel)

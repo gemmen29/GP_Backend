@@ -68,7 +68,7 @@ namespace Twitter.API.Controllers
         [HttpPost("/tweet/like/{tweetId}")]
         public IActionResult Like(int tweetId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userLikes = new UserLikes { UserId = userID, TweetId = tweetId };
             _userLikesService.Like(userLikes);
             return NoContent();
@@ -77,16 +77,16 @@ namespace Twitter.API.Controllers
         [HttpPost("/tweet/dislike/{tweetId}")]
         public IActionResult DisLike(int tweetId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userLikes = new UserLikes { UserId = userID, TweetId = tweetId };
             _userLikesService.DisLike(userLikes);
             return NoContent();
         }
 
-        [HttpGet("/tweet/mylike")]
+        [HttpGet("/tweet/mylikes")]
         public ActionResult<IEnumerable<TweetDetails>> GetMyLikes(int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 
@@ -100,7 +100,7 @@ namespace Twitter.API.Controllers
         [HttpPost("/tweet/bookmark/{tweetId}")]
         public IActionResult Bookmark(int tweetId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userBookmarks = new UserBookmarks { UserId = userID, TweetId = tweetId };
             _userBookmarksService.BookMark(userBookmarks);
             return NoContent();
@@ -109,17 +109,17 @@ namespace Twitter.API.Controllers
         [HttpPost("/tweet/removebookmark/{tweetId}")]
         public IActionResult RemoveBookmark(int tweetId)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userBookmarks = new UserBookmarks { UserId = userID, TweetId = tweetId };
             _userBookmarksService.RemoveBookMark(userBookmarks);
             return NoContent();
         }
 
 
-        [HttpGet("/tweet/mybookmark")]
+        [HttpGet("/tweet/mybookmarks")]
         public ActionResult<IEnumerable<TweetDetails>> GetMyBookmarks(int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.FindFirst(ClaimTypes.NameIdentifier).Value;
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 

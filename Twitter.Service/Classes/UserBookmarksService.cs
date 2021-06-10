@@ -39,5 +39,10 @@ namespace Twitter.Service.Classes
         {
             return Mapper.Map<TweetDetails[]>(_userBookmarksRepository.GetUserBookmarkedTweets(pageSize, pageNumber, userID)).ToList();
         }
+
+        public bool BookmarkExists(string userId, int tweetId)
+        {
+            return _userBookmarksRepository.BookmarkExists(userId, tweetId);
+        }
     }
 }

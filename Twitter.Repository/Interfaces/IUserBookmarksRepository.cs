@@ -14,6 +14,7 @@ namespace Twitter.Repository.Interfaces
         public void RemoveBookMark(UserBookmarks userBookmarks);
         public IEnumerable<ApplicationUser> GetTweetBookmarks(int pageSize, int pageNumber, int TweetID);
         public IEnumerable<Tweet> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID);
+        public bool BookmarkExists(string userId, int tweetId);
         #endregion
     }
 }
