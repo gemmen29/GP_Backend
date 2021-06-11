@@ -20,6 +20,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Twitter.API.HubConfig;
 using Twitter.Data.DTOs;
 using Twitter.Data.Helpers;
 using Twitter.Data.Models;
@@ -113,6 +114,7 @@ namespace Twitter.API
             });
 
             services.AddCors();
+            services.AddSignalR();
 
             services.AddHttpContextAccessor();//allow me to get user information such as id
             services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
@@ -129,7 +131,8 @@ namespace Twitter.API
             }
             app.UseCors(options => options.WithOrigins("http://localhost:4200")//should like this, without any / in the last.
             .AllowAnyMethod() //to allow methods get post put .....
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .AllowCredentials());
 
             app.UseHttpsRedirection();
 
@@ -149,6 +152,7 @@ namespace Twitter.API
             {
                 endpoints.MapRazorPages();
                 endpoints.MapControllers();
+                endpoints.MapHub<TweetHub>("/tweethub");
             });
         }
     }

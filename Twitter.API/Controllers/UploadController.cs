@@ -38,7 +38,7 @@ namespace Twitter.API.Controllers
                         file.CopyTo(stream);
                     }
 
-                    return Ok(new { fileName });
+                    return Ok(new { fileName = newFileName });
                 }
                 else
                 {
@@ -76,7 +76,7 @@ namespace Twitter.API.Controllers
                         await file.CopyToAsync(stream);
                     }
 
-                    return Ok(new { fileName });
+                    return Ok(new { fileName = newFileName });
                 }
                 else
                 {
