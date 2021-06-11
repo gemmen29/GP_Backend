@@ -9,9 +9,9 @@ namespace Twitter.API.HubConfig
 {
     public class TweetHub : Hub
     {
-        public async Task BroadcastTweetList(List<TweetDetails> tweetDetails)
+        public async Task BroadcastTweet(TweetDetails tweetDetails, string userName)
         {
-            await Clients.All.SendAsync("BroadcastTweetList", tweetDetails);
+            await Clients.All.SendAsync("BroadcastTweet", tweetDetails , userName);
         }
     }
 }
