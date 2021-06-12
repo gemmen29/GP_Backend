@@ -57,7 +57,8 @@ namespace Twitter.API.Controllers
         [HttpGet("{id:int}")]
         public ActionResult<TweetWithReplies> GetTweet(int id)
         {
-            var tweet = this._tweetService.GetTweet(id);
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var tweet = this._tweetService.GetTweet(userID, id);
 
             if (tweet == null)
             {

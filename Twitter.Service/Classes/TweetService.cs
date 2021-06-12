@@ -37,10 +37,19 @@ namespace Twitter.Service.Classes
             _tweetRepository.DeleteTweet(id);
         }
 
-        public TweetWithReplies GetTweet(int id)
+        public TweetWithReplies GetTweet(string userId, int tweetId)
         {
-            var tweet = _tweetRepository.GetTweet(id);
-            return Mapper.Map<TweetWithReplies>(tweet);
+            var tweet = _tweetRepository.GetTweet(tweetId);
+            // trival solution
+            var tweetWithReplies = Mapper.Map<TweetWithReplies>(tweet);
+            tweetWithReplies.IsLiked = _userLikesService.LikeExists(userId, tweetId);
+            tweetWithReplies.IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetId);
+            for (int i = 0; i < tweetWithReplies.Replies.Count(); i++)
+            {
+                tweetWithReplies.Replies[i].IsLiked = _userLikesService.LikeExists(userId, tweetWithReplies.Replies[i].Id);
+                tweetWithReplies.Replies[i].IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetWithReplies.Replies[i].Id);
+            }
+            return tweetWithReplies;
         }
 
         public IEnumerable<TweetDetails> GetTweetReplies(int id)
@@ -66,15 +75,15 @@ namespace Twitter.Service.Classes
             return Mapper.Map<TweetDetails[]>(tweets);
         }
 
-        public IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber)
+        public IEnumerable<TweetDetails> GetHomePageTweets(string userId, int pageSize, int pageNumber)
         {
-            var tweets = _tweetRepository.GetHomePageTweets(id, pageSize, pageNumber);
+            var tweets = _tweetRepository.GetHomePageTweets(userId, pageSize, pageNumber);
             // trival solution
             var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
             for (int i = 0; i < tweetsDetails.Count(); i++)
             {
-                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(id, tweetsDetails[i].Id);
-                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(userId, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetsDetails[i].Id);
             }
             return tweetsDetails;
         }

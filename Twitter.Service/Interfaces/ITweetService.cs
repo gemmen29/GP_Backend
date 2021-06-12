@@ -14,7 +14,7 @@ namespace Twitter.Service.Interfaces
         public int GetTweetsCount();
         IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber);
         IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber);
-        TweetWithReplies GetTweet(int id);
+        TweetWithReplies GetTweet(string userId, int tweetId);
         TweetDetails PostTweet(AddTweetModel tweet);
         TweetDetails PostReplyToTweet(int id, AddTweetModel tweet);
         IEnumerable<TweetDetails> GetTweetReplies(int id);

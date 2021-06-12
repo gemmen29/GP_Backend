@@ -87,11 +87,11 @@ namespace Twitter.Service.Configrations
                     dest => dest.ReplyCount,
                     opt => opt.MapFrom(src => src.Replies.Count)
                 )
-                //.ForMember(
-                //    dest => dest.Boo,
-                //    opt => opt.MapFrom(src => src.BookMarkedTweets.Count)
-                //)
-                .ReverseMap();//FollowingDetails
+                .ForMember(
+                    dest => dest.BookmarkCount,
+                    opt => opt.MapFrom(src => src.BookMarkedTweets.Count)
+                )
+                .ReverseMap();
 
             CreateMap<ApplicationUser, UserInteractionDetails>()
                 .ForMember(
