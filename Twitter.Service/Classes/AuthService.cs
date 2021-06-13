@@ -50,6 +50,7 @@ namespace Twitter.Service.Classes
 
             ApplicationUser user = new ApplicationUser();
             Mapper.Map(model, user);
+            user.UserPic = "avatar.png";
 
             //Register the user using UserManager
             var result = await _userManager.CreateAsync(user, model.Password);
@@ -95,7 +96,10 @@ namespace Twitter.Service.Classes
                 IsAuthenticated = true,
                 Roles = new List<string> { "User" },
                 Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
-                Username = user.UserName
+                Username = user.UserName,
+                UserPic = user.UserPic,
+                FirstName = user.FirstName,
+                LastName = user.LastName
             };
         }
 
@@ -120,6 +124,9 @@ namespace Twitter.Service.Classes
             authModel.Username = user.UserName;
             authModel.ExpiresOn = jwtSecurityToken.ValidTo;
             authModel.Roles = rolesList.ToList();
+            authModel.UserPic = user.UserPic;
+            authModel.FirstName = user.FirstName;
+            authModel.LastName = user.LastName;
 
             return authModel;
         }
