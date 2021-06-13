@@ -13,9 +13,19 @@ namespace Twitter.Service.Configrations
     {
         public AutoMapperProfile()
         {
-            CreateMap<ApplicationUser, UserDetails>().ReverseMap();
+            CreateMap<ApplicationUser, UserDetails>()
+                .ForMember(
+                    dest => dest.Image,
+                    opt => opt.MapFrom(src => src.UserPic)
+                )
+                .ReverseMap();
             CreateMap<RegisterModel, ApplicationUser>().ReverseMap();
-            CreateMap<UpdateUserModel, ApplicationUser>().ReverseMap();
+            CreateMap<ApplicationUser, UpdateUserModel>()
+                .ForMember(
+                    dest => dest.Image,
+                    opt => opt.MapFrom(src => src.UserPic)
+                )
+                .ReverseMap();
             CreateMap<Tweet, TweetDetails>()
                 .ForMember(
                     dest => dest.LikeCount,
@@ -97,7 +107,11 @@ namespace Twitter.Service.Configrations
                 .ForMember(
                     dest => dest.FullName,
                     opt => opt.MapFrom(src => src.FirstName+" "+src.LastName)
-                ).ReverseMap();
+                ).ForMember(
+                    dest => dest.Image,
+                    opt => opt.MapFrom(src => src.UserPic)
+                )
+                .ReverseMap();
         }
     }
 }

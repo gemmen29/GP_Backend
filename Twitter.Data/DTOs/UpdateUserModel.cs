@@ -17,5 +17,6 @@ namespace Twitter.Data.DTOs
 
         [Required]
         public string Email { get; set; }
+        public string Image { get; set; }
     }
 }

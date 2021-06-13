@@ -17,12 +17,14 @@ namespace Twitter.API.Controllers
         private readonly IAuthService _authService;
         private readonly IMailService _mailService;
         private readonly IConfiguration _configuration;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AccountController(IAuthService authService, IMailService mailService, IConfiguration configuration)
+        public AccountController(IAuthService authService, IMailService mailService, IConfiguration configuration, IHttpContextAccessor httpContextAccessor)
         {
             _authService = authService;
-            this._mailService = mailService;
-            this._configuration = configuration;
+            _mailService = mailService;
+            _configuration = configuration;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         [HttpPost("register")]
@@ -50,7 +52,7 @@ namespace Twitter.API.Controllers
             if (!result.IsAuthenticated)
                 return BadRequest(result.Message);
 
-            //_mailService.SendEmail(model.Email, "New login", "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
+            _mailService.SendEmail(model.Email, "New login", "<h1>Hey!, new login to your account noticed</h1><p>New login to your account at " + DateTime.Now + "</p>");
 
             return Ok(result);
         }
@@ -120,22 +122,23 @@ namespace Twitter.API.Controllers
             return BadRequest("Some properties are not valid");
         }
 
-        [HttpGet("details/{email}")]
-        public async Task<IActionResult> CurrentUserDetails(string email)
+        [HttpGet("details")]
+        public async Task<IActionResult> CurrentUserDetails()
         {
-
-            var result = await _authService.GetCurrentUser(email);
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var result = await _authService.GetCurrentUser(userID);
 
             if (result == null)
-                return BadRequest(new { Message = "Email is incorrect!" });
+                return BadRequest(new { Message = "UnAuthorized" });
 
             return Ok(result);
         }
 
-        [HttpPut("update/{userName}")]
-        public async Task<IActionResult> UpdateAsync(string userName, UpdateUserModel model)
+        [HttpPut("update")]
+        public async Task<IActionResult> UpdateAsync(UpdateUserModel model)
         {
-            var result = await _authService.UpdateAsync(userName, model);
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var result = await _authService.UpdateAsync(userID, model);
 
             if (!result.IsAuthenticated)
                 return BadRequest(new { Message = result.Message });

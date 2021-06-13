@@ -272,9 +272,9 @@ namespace Twitter.Service.Classes
             return jwtSecurityToken;
         }
 
-        public async Task<UserDetails> GetCurrentUser(string email)
+        public async Task<UserDetails> GetCurrentUser(string userID)
         {
-            var user = await _userManager.FindByEmailAsync(email);
+            var user = await _userManager.FindByIdAsync(userID);
             var userDetails = new UserDetails();
             if (user is null)
             {
@@ -284,14 +284,14 @@ namespace Twitter.Service.Classes
             return userDetails;
         }
 
-        public async Task<AuthModel> UpdateAsync(string userName, UpdateUserModel model)
+        public async Task<AuthModel> UpdateAsync(string userID, UpdateUserModel model)
         {
 
-            ApplicationUser user = await _userManager.FindByNameAsync(userName);
+            ApplicationUser user = await _userManager.FindByIdAsync(userID);
             if(user is null) {
                 return new AuthModel
                 {
-                    Message = "Not User With this User Name"
+                    Message = "Not User With this User ID"
                 };
             }
             Mapper.Map(model, user);
@@ -315,17 +315,6 @@ namespace Twitter.Service.Classes
                 IsAuthenticated = true,
                 Message = "Updated Successfully!" };
         }
-
-        public async Task<string> GetUserID(string userName)
-        {
-            ApplicationUser user = await _userManager.FindByNameAsync(userName);
-            if (user is null)
-            {
-                return String.Empty;
-            }
-            return user.Id;
-        }
-
 
     }
 }
