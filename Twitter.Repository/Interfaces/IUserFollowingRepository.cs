@@ -14,8 +14,8 @@ namespace Twitter.Repository.Interfaces
         public void UnFollow(Following following);
         public IEnumerable<ApplicationUser> GetFollowers(int pageSize, int pageNumber, string userId);
         public IEnumerable<ApplicationUser> GetFollowings(int pageSize, int pageNumber, string userId);
-
         public bool FollowingExists(string userId, string followingId);
+        public IEnumerable<ApplicationUser> SuggestedFollowers(string userId);
         #endregion
     }
 }

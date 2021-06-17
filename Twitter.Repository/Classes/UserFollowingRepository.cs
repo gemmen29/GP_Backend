@@ -50,5 +50,36 @@ namespace Twitter.Repository.Classes
             //return _context.Following.Where(u => u.FollowerId == userId).Select(u => u.FollowingUser).ToList(); 
             return GetPageRecordsWhere(pageSize, pageNumber, u => u.FollowerId == userId, "FollowingUser").Select(u => u.FollowingUser).ToList();
         }
+
+        public IEnumerable<ApplicationUser> SuggestedFollowers(string userId)
+        {
+            var usersThatIFollow = _context.Following.Where(f2 => f2.FollowerId == userId).Where(f2 => f2.FollowingId != userId).Select(f3 => f3.FollowingId).ToList();
+
+            var result = _context.Following.Where(f => f.FollowerId != userId).Where(f => f.FollowingId != userId)
+                .Where(f => usersThatIFollow.Contains(f.FollowerId))
+                .Where(f => !usersThatIFollow.Contains(f.FollowingId)).AsEnumerable()
+                .GroupBy(f => f.FollowingId).OrderByDescending(f => f.Count()).Take(3).ToList();
+
+            List<ApplicationUser> suggestedFollowings = new List<ApplicationUser>();
+            foreach(var group in result)
+            {
+                suggestedFollowings.Add(_context.Users.Find(group.Key));
+            }
+
+            if (suggestedFollowings.Count() < 3)
+            {
+                int numberOfExtraSuggestedFollowings = 3 - suggestedFollowings.Count();
+                var result2 = _context.Following.Where(f => f.FollowerId != userId).Where(f => f.FollowingId != userId)
+                    .Where(f => !suggestedFollowings.Contains(f.FollowingUser))
+                    .Where(f => !usersThatIFollow.Contains(f.FollowingId)).AsEnumerable()
+                .GroupBy(f => f.FollowingId).OrderByDescending(f => f.Count()).Take(numberOfExtraSuggestedFollowings).ToList();
+                foreach (var group in result2)
+                {
+                    suggestedFollowings.Add(_context.Users.Find(group.Key));
+                }
+            }
+
+            return suggestedFollowings;
+        }
     }
 }

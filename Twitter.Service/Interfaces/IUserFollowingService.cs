@@ -15,5 +15,6 @@ namespace Twitter.Service.Interfaces
         public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId);
         public List<UserInteractionDetails> GetFollowers(int pageSize, int pageNumber, string userId);
         public bool FollowingExists(string userId, string followingId);
+        public IEnumerable<UserDetails> SuggestedFollowers(string userId);
     }
 }

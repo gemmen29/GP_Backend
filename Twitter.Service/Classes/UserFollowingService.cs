@@ -43,5 +43,10 @@ namespace Twitter.Service.Classes
         {
             return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowers(pageSize, pageNumber, userId)).ToList();
         }
+
+        public IEnumerable<UserDetails> SuggestedFollowers(string userId)
+        {
+            return Mapper.Map<UserDetails[]>(_userFollowingRepository.SuggestedFollowers(userId)).ToList(); ;
+        }
     }
 }

@@ -74,6 +74,13 @@ namespace Twitter.API.Controllers
             return _userFollowingService.GetFollowers(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 
+        [HttpGet("/user/suggestedfollowings")]
+        public ActionResult<IEnumerable<UserDetails>> SuggestedFollowings()
+        {
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return _userFollowingService.SuggestedFollowers(userID).ToList();
+        }
+
         [HttpPost("/tweet/like/{tweetId}")]
         public IActionResult Like(int tweetId)
         {
