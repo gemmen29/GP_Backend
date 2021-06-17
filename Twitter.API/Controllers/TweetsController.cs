@@ -44,13 +44,12 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/HomePageTweets
-        [HttpGet("HomePageTweets")]
-        public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? page)
+        [HttpGet("HomePageTweets/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? pageSize, int? pageNumber)
         {
-            int pageNumber = (page ?? 1);
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             
-            return _tweetService.GetHomePageTweets(userID, 10,pageNumber).ToList();
+            return _tweetService.GetHomePageTweets(userID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
         // GET: api/Tweets/5

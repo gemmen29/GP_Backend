@@ -60,11 +60,18 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet("/user/following")]
+        [HttpGet("/user/following/{pageSize}/{pageNumber}")]
         public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(int? pageSize, int? pageNumber)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+        }
+
+        [HttpGet("/user/followers/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowers(int? pageSize, int? pageNumber)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return _userFollowingService.GetFollowers(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 
         [HttpPost("/tweet/like/{tweetId}")]
@@ -85,7 +92,7 @@ namespace Twitter.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("/tweet/mylikes")]
+        [HttpGet("/tweet/mylikes/{pageSize}/{pageNumber}")]
         public ActionResult<IEnumerable<TweetDetails>> GetMyLikes(int? pageSize, int? pageNumber)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
@@ -118,7 +125,7 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet("/tweet/mybookmarks")]
+        [HttpGet("/tweet/mybookmarks/{pageSize}/{pageNumber}")]
         public ActionResult<IEnumerable<TweetDetails>> GetMyBookmarks(int? pageSize, int? pageNumber)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;

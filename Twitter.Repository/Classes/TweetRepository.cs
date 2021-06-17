@@ -70,13 +70,19 @@ namespace Twitter.Repository.Classes
             pageSize = (pageSize <= 0) ? 10 : pageSize;
             pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
 
-            return 
-                _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
+            return
+                _context.Tweet.Where(t => followingIds.Contains(t.AuthorId)).Where(t => t.RespondedTweet.ReplyId != t.Id)//.Any(r => r.ReplyId == t.Id))
                 .OrderByDescending(t => t.CreationDate)
                 .Skip(pageNumber * pageSize).Take(pageSize)
                 .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
                 .ToList();
-            
+            //return
+            //    _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
+            //    .OrderByDescending(t => t.CreationDate)
+            //    .Skip(pageNumber * pageSize).Take(pageSize)
+            //    .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
+            //    .ToList();
+
         }
 
         public async Task<Tweet> PostReplyToTweet(int id, Tweet tweet)

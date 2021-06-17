@@ -18,6 +18,7 @@ namespace Twitter.Service.Classes
     {
         private readonly IUserLikesService _userLikesService;
         private readonly IUserBookmarksService _userBookmarksService;
+        private readonly IUserFollowingService _userFollowingService;
 
         private ITweetRepository _tweetRepository { get; }
 
@@ -25,12 +26,14 @@ namespace Twitter.Service.Classes
             ITweetRepository tweetRepository,
             IUserLikesService userLikesService, 
             IUserBookmarksService userBookmarksService,
+            IUserFollowingService userFollowingService,
             IMapper mapper
             ): base(mapper)
         {
             _tweetRepository = tweetRepository;
             _userLikesService = userLikesService;
             _userBookmarksService = userBookmarksService;
+            _userFollowingService = userFollowingService;
         }
         public void DeleteTweet(int id)
         {
@@ -84,6 +87,7 @@ namespace Twitter.Service.Classes
             {
                 tweetsDetails[i].IsLiked = _userLikesService.LikeExists(userId, tweetsDetails[i].Id);
                 tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetsDetails[i].Id);
+                tweetsDetails[i].Author.IsFollowedByCurrentUser = (userId == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(userId, tweetsDetails[i].Author.Id);
             }
             return tweetsDetails;
         }

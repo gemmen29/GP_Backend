@@ -36,13 +36,19 @@ namespace Twitter.Repository.Classes
 
         public IEnumerable<ApplicationUser> GetFollowers(int pageSize, int pageNumber, string userId)
         {
-            //return _context.Following.Where(u => u.FollowerId == userId).Select(u => u.FollowingUser).ToList(); 
-            return GetPageRecordsWhere(pageSize, pageNumber, u => u.FollowerId == userId, "FollowingUser").Select(u => u.FollowingUser).ToList();
+            //return _context.Following.Where(u => u.FollowingId == userId).Select(u => u.FollowerUser).ToList();
+            return GetPageRecordsWhere(pageSize, pageNumber, u => u.FollowingId == userId, "FollowerUser").Select(u => u.FollowerUser).ToList();
         }
 
         public bool FollowingExists(string userId, string followingId)
         {
             return GetFirstOrDefault(f => f.FollowerId == userId && f.FollowingId == followingId) != null ? true : false;
+        }
+
+        public IEnumerable<ApplicationUser> GetFollowings(int pageSize, int pageNumber, string userId)
+        {
+            //return _context.Following.Where(u => u.FollowerId == userId).Select(u => u.FollowingUser).ToList(); 
+            return GetPageRecordsWhere(pageSize, pageNumber, u => u.FollowerId == userId, "FollowingUser").Select(u => u.FollowingUser).ToList();
         }
     }
 }

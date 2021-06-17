@@ -31,12 +31,17 @@ namespace Twitter.Service.Classes
 
         public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId)
         {
-            return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowers(pageSize, pageNumber, userId)).ToList();
+            return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowings(pageSize, pageNumber, userId)).ToList();
         }
 
         public bool FollowingExists(string userId, string followingId)
         {
             return _userFollowingRepository.FollowingExists(userId, followingId);
+        }
+
+        public List<UserInteractionDetails> GetFollowers(int pageSize, int pageNumber, string userId)
+        {
+            return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowers(pageSize, pageNumber, userId)).ToList();
         }
     }
 }
