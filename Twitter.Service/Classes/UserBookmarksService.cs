@@ -14,18 +14,15 @@ namespace Twitter.Service.Classes
     public class UserBookmarksService : BaseService, IUserBookmarksService
     {
         private IUserBookmarksRepository _userBookmarksRepository { get; }
-        private readonly IUserLikesService _userLikesService;
-        private readonly IUserBookmarksService _userBookmarksService;
+        private readonly IUserLikesRepository _userLikesRepository;
 
         public UserBookmarksService(
             IUserBookmarksRepository userBookmarksRepository,
-            IUserLikesService userLikesService,
-            IUserBookmarksService userBookmarksService, 
+            IUserLikesRepository userLikesRepository,
             IMapper mapper) : base(mapper)
         {
             _userBookmarksRepository = userBookmarksRepository;
-            _userLikesService = userLikesService;
-            _userBookmarksService = userBookmarksService;
+            _userLikesRepository = userLikesRepository;
         }
 
         public void BookMark(UserBookmarks userBookmarks)
@@ -50,8 +47,8 @@ namespace Twitter.Service.Classes
             var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
             for (int i = 0; i < tweetsDetails.Count(); i++)
             {
-                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(userID, tweetsDetails[i].Id);
-                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(userID, tweetsDetails[i].Id);
+                tweetsDetails[i].IsLiked = _userLikesRepository.LikeExists(userID, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksRepository.BookmarkExists(userID, tweetsDetails[i].Id);
                 //tweetsDetails[i].Author.IsFollowedByCurrentUser = (userID == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(userId, tweetsDetails[i].Author.Id);
             }
             return tweetsDetails;
