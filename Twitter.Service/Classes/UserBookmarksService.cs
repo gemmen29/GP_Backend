@@ -14,10 +14,18 @@ namespace Twitter.Service.Classes
     public class UserBookmarksService : BaseService, IUserBookmarksService
     {
         private IUserBookmarksRepository _userBookmarksRepository { get; }
+        private readonly IUserLikesService _userLikesService;
+        private readonly IUserBookmarksService _userBookmarksService;
 
-        public UserBookmarksService(IUserBookmarksRepository userBookmarksRepository, IMapper mapper) : base(mapper)
+        public UserBookmarksService(
+            IUserBookmarksRepository userBookmarksRepository,
+            IUserLikesService userLikesService,
+            IUserBookmarksService userBookmarksService, 
+            IMapper mapper) : base(mapper)
         {
             _userBookmarksRepository = userBookmarksRepository;
+            _userLikesService = userLikesService;
+            _userBookmarksService = userBookmarksService;
         }
 
         public void BookMark(UserBookmarks userBookmarks)
@@ -35,9 +43,18 @@ namespace Twitter.Service.Classes
             return Mapper.Map<UserInteractionDetails[]>(_userBookmarksRepository.GetTweetBookmarks(pageSize, pageNumber, tweetID)).ToList();
         }
 
-        public List<TweetDetails> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID)
+        public IEnumerable<TweetDetails> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID)
         {
-            return Mapper.Map<TweetDetails[]>(_userBookmarksRepository.GetUserBookmarkedTweets(pageSize, pageNumber, userID)).ToList();
+            var tweets = _userBookmarksRepository.GetUserBookmarkedTweets(pageSize, pageNumber, userID);
+            // trival solution
+            var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
+            for (int i = 0; i < tweetsDetails.Count(); i++)
+            {
+                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(userID, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(userID, tweetsDetails[i].Id);
+                //tweetsDetails[i].Author.IsFollowedByCurrentUser = (userID == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(userId, tweetsDetails[i].Author.Id);
+            }
+            return tweetsDetails;
         }
 
         public bool BookmarkExists(string userId, int tweetId)

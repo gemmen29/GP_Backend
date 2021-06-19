@@ -13,7 +13,7 @@ namespace Twitter.Service.Interfaces
         public void BookMark(UserBookmarks userBookmarks);
         public void RemoveBookMark(UserBookmarks userBookmarks);
         public List<UserInteractionDetails> GetTweetBookmarks(int pageSize, int pageNumber, int tweetID);
-        public List<TweetDetails> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID);
+        public IEnumerable<TweetDetails> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID);
         public bool BookmarkExists(string userId, int tweetId);
     }
 }

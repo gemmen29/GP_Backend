@@ -13,7 +13,7 @@ namespace Twitter.Service.Interfaces
         public void Like(UserLikes userLikes);
         public void DisLike(UserLikes userLikes);
         public List<UserInteractionDetails> GetTweetLikes(int pageSize, int pageNumber, int tweetID);
-        public List<TweetDetails> GetUserLikedTweets(int pageSize, int pageNumber, string userID);
+        public IEnumerable<TweetDetails> GetUserLikedTweets(int pageSize, int pageNumber, string userID);
         public bool LikeExists(string userId, int tweetId);
     }
 }
