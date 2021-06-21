@@ -121,5 +121,10 @@ namespace Twitter.Repository.Classes
             Delete(id);
             await _context.SaveChangesAsync();
         }
+
+        public int GetMyTweetsCount(string id)
+        {
+            return CountEntityWhere(t => t.AuthorId == id);
+        }
     }
 }

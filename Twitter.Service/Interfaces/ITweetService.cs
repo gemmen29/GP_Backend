@@ -13,6 +13,7 @@ namespace Twitter.Service.Interfaces
         IEnumerable<TweetDetails> GetTweets(int pageSize, int pageNumber);
         public int GetTweetsCount();
         IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber);
+        public int GetMyTweetsCount(string id);
         IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber);
         TweetWithReplies GetTweet(string userId, int tweetId);
         TweetDetails PostTweet(AddTweetModel tweet);

@@ -42,6 +42,13 @@ namespace Twitter.API.Controllers
             return _tweetService.GetMyTweets(userID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
+        [HttpGet("mytweets/count")]
+        public int GetCount(int? pageSize, int? pageNumber)
+        {
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return _tweetService.GetMyTweetsCount(userID);
+        }
+
         // GET: api/HomePageTweets
         [HttpGet("HomePageTweets/{pageSize}/{pageNumber}")]
         public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? pageSize, int? pageNumber)

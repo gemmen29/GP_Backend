@@ -111,5 +111,9 @@ namespace Twitter.Service.Classes
             return _tweetRepository.TweetExists(id);
         }
 
+        public int GetMyTweetsCount(string id)
+        {
+            return _tweetRepository.GetMyTweetsCount(id);
+        }
     }
 }
