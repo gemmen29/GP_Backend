@@ -65,7 +65,12 @@ namespace Twitter.Repository.Classes
             pageSize = (pageSize <= 0) ? 10 : pageSize;
             pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
 
-            return _context.Tweet.Where(t => t.AuthorId == id).Skip(pageNumber * pageSize).Take(pageSize).Include(t=>t.Author).Include(t => t.Images).Include(t => t.Video).ToList();
+            return _context.Tweet.Where(t => t.AuthorId == id)
+                .Where(t => t.RespondedTweet.ReplyId != t.Id)
+                .Skip(pageNumber * pageSize).Take(pageSize)
+                .Include(t=>t.Author).Include(t => t.Images).Include(t => t.Video)
+                .Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets)
+                .ToList();
         }
 
         public IEnumerable<Tweet> GetHomePageTweets(string id, int pageSize, int pageNumber)
@@ -82,7 +87,8 @@ namespace Twitter.Repository.Classes
                 _context.Tweet.Where(t => followingIds.Contains(t.AuthorId)).Where(t => t.RespondedTweet.ReplyId != t.Id)//.Any(r => r.ReplyId == t.Id))
                 .OrderByDescending(t => t.CreationDate)
                 .Skip(pageNumber * pageSize).Take(pageSize)
-                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
+                .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets)
+                .Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
                 .ToList();
             //return
             //    _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
@@ -128,6 +134,11 @@ namespace Twitter.Repository.Classes
             _context.Reply.RemoveRange(_context.Reply.Where(r => r.TweetId == id || r.ReplyId == id).ToList());
             Delete(id);
             await _context.SaveChangesAsync();
+        }
+
+        public int GetMyTweetsCount(string id)
+        {
+            return CountEntityWhere(t => t.AuthorId == id);
         }
     }
 }

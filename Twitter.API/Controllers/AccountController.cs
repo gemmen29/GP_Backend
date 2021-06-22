@@ -133,6 +133,18 @@ namespace Twitter.API.Controllers
 
             return Ok(result);
         }
+        [HttpGet("details/{username}")]
+        public async Task<IActionResult> CurrentUserDetails(string username)
+        {
+            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
+            var result = await _authService.GetCurrentUser(userID);
+
+            if (result == null)
+                return BadRequest(new { Message = "UnAuthorized" });
+
+            return Ok(result);
+        }
 
         [HttpPut("update")]
         public async Task<IActionResult> UpdateAsync(UpdateUserModel model)

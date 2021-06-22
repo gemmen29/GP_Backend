@@ -60,17 +60,19 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet("/user/following/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(int? pageSize, int? pageNumber)
+        [HttpGet("/user/following/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(string username, int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
             return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 
-        [HttpGet("/user/followers/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowers(int? pageSize, int? pageNumber)
+        [HttpGet("/user/followers/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowers(string username, int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
             return _userFollowingService.GetFollowers(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 
@@ -99,11 +101,12 @@ namespace Twitter.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("/tweet/mylikes/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyLikes(int? pageSize, int? pageNumber)
+        [HttpGet("/tweet/likes/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetLikes(string username, int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
-            return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            var currnetUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
+            return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID, currnetUserID).ToList();
         }
 
         [HttpGet("/tweet/tweetlikes/{tweetId}")]
@@ -132,11 +135,12 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet("/tweet/mybookmarks/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyBookmarks(int? pageSize, int? pageNumber)
+        [HttpGet("/tweet/bookmarks/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetBookmarks(string username, int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
-            return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            var currentUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
+            return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID, currentUserID).ToList();
         }
 
         [HttpGet("/tweet/tweetbookmarks/{tweetId}")]
