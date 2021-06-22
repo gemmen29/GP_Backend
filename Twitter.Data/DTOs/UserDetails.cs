@@ -15,5 +15,7 @@ namespace Twitter.Data.DTOs
         public string Email { get; set; }
         public string UserPic { get; set; }
         public bool IsFollowedByCurrentUser { get; set; }
+        public int FollowingCount { get; set; }
+        public int FollowersCount { get; set; }
     }
 }

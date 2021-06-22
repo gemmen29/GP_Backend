@@ -16,6 +16,7 @@ namespace Twitter.Repository
         public DbSet<Following> Following { get; set; }
         public DbSet<UserLikes> UserLikes { get; set; }
         public DbSet<UserBookmarks> UserBookmarks { get; set; }
+        //public override DbSet<ApplicationUser> Users { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

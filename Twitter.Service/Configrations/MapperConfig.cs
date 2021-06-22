@@ -13,7 +13,16 @@ namespace Twitter.Service.Configrations
     {
         public AutoMapperProfile()
         {
-            CreateMap<ApplicationUser, UserDetails>().ReverseMap();
+            CreateMap<ApplicationUser, UserDetails>()
+                .ForMember(
+                    dest => dest.FollowingCount,
+                    opt => opt.MapFrom(src => src.Following.Count)
+                )
+                .ForMember(
+                    dest => dest.FollowersCount,
+                    opt => opt.MapFrom(src => src.Followers.Count)
+                )
+                .ReverseMap();
             CreateMap<RegisterModel, ApplicationUser>().ReverseMap();
             CreateMap<ApplicationUser, UpdateUserModel>()
                 .ForMember(

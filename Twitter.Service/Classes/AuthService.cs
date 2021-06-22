@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.WebUtilities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
@@ -14,6 +15,7 @@ using System.Threading.Tasks;
 using Twitter.Data.DTOs;
 using Twitter.Data.Helpers;
 using Twitter.Data.Models;
+using Twitter.Repository;
 using Twitter.Service.Interfaces;
 
 namespace Twitter.Service.Classes
@@ -24,6 +26,7 @@ namespace Twitter.Service.Classes
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IMailService _mailService;
         private readonly IConfiguration _configuration;
+        private readonly ApplicationDbContext _context;
         private readonly JWT _jwt;
 
         public AuthService(UserManager<ApplicationUser> userManager,
@@ -31,12 +34,14 @@ namespace Twitter.Service.Classes
             IOptions<JWT> jwt,
             IMailService mailService,
             IConfiguration configuration,
+            ApplicationDbContext context,
             IMapper mapper) : base(mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _mailService = mailService;
             _configuration = configuration;
+            _context = context;
             _jwt = jwt.Value;
         }
 
@@ -281,7 +286,8 @@ namespace Twitter.Service.Classes
 
         public async Task<UserDetails> GetCurrentUser(string userID)
         {
-            var user = await _userManager.FindByIdAsync(userID);
+            //var user = await _userManager.FindByIdAsync(userID);
+            var user = await _context.Users.Include(u => u.Followers).Include(u => u.Following).FirstOrDefaultAsync(u => u.Id == userID);
             var userDetails = new UserDetails();
             if (user is null)
             {

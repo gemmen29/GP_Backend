@@ -75,7 +75,14 @@ namespace Twitter.Service.Classes
         public IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber)
         {
             var tweets = _tweetRepository.GetMyTweets(id, pageSize, pageNumber);
-            return Mapper.Map<TweetDetails[]>(tweets);
+            var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
+            for (int i = 0; i < tweetsDetails.Count(); i++)
+            {
+                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(id, tweetsDetails[i].Id);
+                tweetsDetails[i].Author.IsFollowedByCurrentUser = (id == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(id, tweetsDetails[i].Author.Id);
+            }
+            return tweetsDetails;
         }
 
         public IEnumerable<TweetDetails> GetHomePageTweets(string userId, int pageSize, int pageNumber)
