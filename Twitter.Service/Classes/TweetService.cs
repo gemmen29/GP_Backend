@@ -72,15 +72,15 @@ namespace Twitter.Service.Classes
             return _tweetRepository.GetTweetsCount();
         }
 
-        public IEnumerable<TweetDetails> GetMyTweets(string id, int pageSize, int pageNumber)
+        public IEnumerable<TweetDetails> GetMyTweets(string id, string currentUserID, int pageSize, int pageNumber)
         {
             var tweets = _tweetRepository.GetMyTweets(id, pageSize, pageNumber);
             var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
             for (int i = 0; i < tweetsDetails.Count(); i++)
             {
-                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(id, tweetsDetails[i].Id);
-                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(id, tweetsDetails[i].Id);
-                tweetsDetails[i].Author.IsFollowedByCurrentUser = (id == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(id, tweetsDetails[i].Author.Id);
+                tweetsDetails[i].IsLiked = _userLikesService.LikeExists(currentUserID, tweetsDetails[i].Id);
+                tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(currentUserID, tweetsDetails[i].Id);
+                tweetsDetails[i].Author.IsFollowedByCurrentUser = (currentUserID == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(currentUserID, tweetsDetails[i].Author.Id);
             }
             return tweetsDetails;
         }

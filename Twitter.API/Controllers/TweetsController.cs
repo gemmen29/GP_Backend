@@ -37,20 +37,20 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/MyTweets
-        [HttpGet("mytweets/{username}/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(string username, int? pageSize, int? pageNumber)
+        [HttpGet("tweets/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetTweets(string username, int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var currentUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userID = _authService.GetUserID(username).Result;
-            return _tweetService.GetMyTweets(userID, pageSize ?? 10, pageNumber ?? 1).ToList();
+            return _tweetService.GetMyTweets(userID, currentUserID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
-        [HttpGet("mytweets/count")]
-        public int GetCount(int? pageSize, int? pageNumber)
-        {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
-            return _tweetService.GetMyTweetsCount(userID);
-        }
+        //[HttpGet("mytweets/count")]
+        //public int GetCount(int? pageSize, int? pageNumber)
+        //{
+        //    var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+        //    return _tweetService.GetMyTweetsCount(userID);
+        //}
 
         // GET: api/HomePageTweets
         [HttpGet("HomePageTweets/{pageSize}/{pageNumber}")]

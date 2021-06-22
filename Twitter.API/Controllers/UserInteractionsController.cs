@@ -101,12 +101,12 @@ namespace Twitter.API.Controllers
             return NoContent();
         }
 
-        [HttpGet("/tweet/mylikes/{username}/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyLikes(string username, int? pageSize, int? pageNumber)
+        [HttpGet("/tweet/likes/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetLikes(string username, int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var currnetUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userID = _authService.GetUserID(username).Result;
-            return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            return _userLikesService.GetUserLikedTweets(pageSize ?? 10, pageNumber ?? 1, userID, currnetUserID).ToList();
         }
 
         [HttpGet("/tweet/tweetlikes/{tweetId}")]
@@ -135,12 +135,12 @@ namespace Twitter.API.Controllers
         }
 
 
-        [HttpGet("/tweet/mybookmarks/{username}/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyBookmarks(string username, int? pageSize, int? pageNumber)
+        [HttpGet("/tweet/bookmarks/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetBookmarks(string username, int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var currentUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userID = _authService.GetUserID(username).Result;
-            return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            return _userBookmarksService.GetUserBookmarkedTweets(pageSize ?? 10, pageNumber ?? 1, userID, currentUserID).ToList();
         }
 
         [HttpGet("/tweet/tweetbookmarks/{tweetId}")]
