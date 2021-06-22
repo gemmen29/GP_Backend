@@ -329,5 +329,10 @@ namespace Twitter.Service.Classes
                 Message = "Updated Successfully!" };
         }
 
+        public async Task<string> GetUserID(string userName)
+        {
+            var user = await _userManager.FindByNameAsync(userName);
+            return user.Id;
+        }
     }
 }

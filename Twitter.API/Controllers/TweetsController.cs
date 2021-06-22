@@ -19,11 +19,13 @@ namespace Twitter.API.Controllers
     {
         private readonly ITweetService _tweetService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IAuthService _authService;
 
-        public TweetsController(ITweetService tweetService, IHttpContextAccessor httpContextAccessor)
+        public TweetsController(ITweetService tweetService, IHttpContextAccessor httpContextAccessor, IAuthService authService)
         {
             _tweetService = tweetService;
             _httpContextAccessor = httpContextAccessor;
+            _authService = authService;
         }
 
         // GET: api/Tweets
@@ -35,10 +37,11 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/MyTweets
-        [HttpGet("mytweets/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(int? pageSize, int? pageNumber)
+        [HttpGet("mytweets/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetMyTweets(string username, int? pageSize, int? pageNumber)
         {
-            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
             return _tweetService.GetMyTweets(userID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
