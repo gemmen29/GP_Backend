@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Twitter.Repository;
 
 namespace Twitter.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210620233947_updateRetweetModel")]
+    partial class updateRetweetModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -292,12 +294,17 @@ namespace Twitter.Repository.Migrations
                     b.Property<int>("ReTweetId")
                         .HasColumnType("int");
 
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
+
                     b.HasKey("Id");
 
                     b.HasIndex("QouteTweetId")
                         .IsUnique();
 
                     b.HasIndex("ReTweetId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Retweets");
                 });
@@ -490,9 +497,15 @@ namespace Twitter.Repository.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
+                    b.HasOne("Twitter.Data.Models.ApplicationUser", "User")
+                        .WithMany("ReTweets")
+                        .HasForeignKey("UserId");
+
                     b.Navigation("QouteTweet");
 
                     b.Navigation("ReTweet");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Twitter.Data.Models.Tweet", b =>
@@ -562,6 +575,8 @@ namespace Twitter.Repository.Migrations
                     b.Navigation("Following");
 
                     b.Navigation("Likes");
+
+                    b.Navigation("ReTweets");
 
                     b.Navigation("Tweets");
                 });

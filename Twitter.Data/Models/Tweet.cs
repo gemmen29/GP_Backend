@@ -32,5 +32,12 @@ namespace Twitter.Data.Models
 
         [JsonIgnore]
         public Reply RespondedTweet { get; set; }
+
+        [JsonIgnore]
+        public List<Retweet> ReTweets { get; set; }
+
+        [JsonIgnore]
+        public Retweet QouteTweet { get; set; }
+
     }
 }

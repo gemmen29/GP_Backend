@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Twitter.Repository;
 
 namespace Twitter.Repository.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20210619120038_AddRetweetID")]
+    partial class AddRetweetID
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -286,18 +288,20 @@ namespace Twitter.Repository.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<int>("QouteTweetId")
+                    b.Property<string>("Qoute")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("TweetId")
                         .HasColumnType("int");
 
-                    b.Property<int>("ReTweetId")
-                        .HasColumnType("int");
+                    b.Property<string>("UserId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("QouteTweetId")
-                        .IsUnique();
+                    b.HasIndex("TweetId");
 
-                    b.HasIndex("ReTweetId");
+                    b.HasIndex("UserId");
 
                     b.ToTable("Retweets");
                 });
@@ -478,21 +482,19 @@ namespace Twitter.Repository.Migrations
 
             modelBuilder.Entity("Twitter.Data.Models.Retweet", b =>
                 {
-                    b.HasOne("Twitter.Data.Models.Tweet", "QouteTweet")
-                        .WithOne("QouteTweet")
-                        .HasForeignKey("Twitter.Data.Models.Retweet", "QouteTweetId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("Twitter.Data.Models.Tweet", "ReTweet")
+                    b.HasOne("Twitter.Data.Models.Tweet", "Tweet")
                         .WithMany("ReTweets")
-                        .HasForeignKey("ReTweetId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasForeignKey("TweetId")
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("QouteTweet");
+                    b.HasOne("Twitter.Data.Models.ApplicationUser", "User")
+                        .WithMany("ReTweets")
+                        .HasForeignKey("UserId");
 
-                    b.Navigation("ReTweet");
+                    b.Navigation("Tweet");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("Twitter.Data.Models.Tweet", b =>
@@ -563,6 +565,8 @@ namespace Twitter.Repository.Migrations
 
                     b.Navigation("Likes");
 
+                    b.Navigation("ReTweets");
+
                     b.Navigation("Tweets");
                 });
 
@@ -573,8 +577,6 @@ namespace Twitter.Repository.Migrations
                     b.Navigation("Images");
 
                     b.Navigation("LikedTweets");
-
-                    b.Navigation("QouteTweet");
 
                     b.Navigation("Replies");
 

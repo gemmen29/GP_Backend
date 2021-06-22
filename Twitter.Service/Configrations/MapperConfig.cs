@@ -107,6 +107,17 @@ namespace Twitter.Service.Configrations
                     opt => opt.MapFrom(src => src.UserPic)
                 )
                 .ReverseMap();
+
+            CreateMap<Retweet, AddRetweetDTO>()
+
+                .ReverseMap();
+
+            CreateMap<Retweet, RetweetDetails>()
+                //.ForMember(
+                //    dest => dest.QouteTweet.Author.Id,
+                //    opt => opt.MapFrom(src => src.)
+                //)
+                .ReverseMap();
         }
     }
 }
