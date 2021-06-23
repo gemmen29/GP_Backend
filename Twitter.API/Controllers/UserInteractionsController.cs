@@ -110,9 +110,10 @@ namespace Twitter.API.Controllers
         }
 
         [HttpGet("/tweet/tweetlikes/{tweetId}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetTweetLikes(int? pageSize, int? pageNumber, int tweetId)
+        public ActionResult<IEnumerable<UserDetails>> GetTweetLikes(int? pageSize, int? pageNumber, int tweetId)
         {
-            return _userLikesService.GetTweetLikes(pageSize ?? 10, pageNumber ?? 1, tweetId).ToList();
+            var currnetUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return _userLikesService.GetTweetLikes(pageSize ?? 10, pageNumber ?? 1, tweetId, currnetUserID).ToList();
         }
 
 
@@ -144,9 +145,10 @@ namespace Twitter.API.Controllers
         }
 
         [HttpGet("/tweet/tweetbookmarks/{tweetId}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetTweetBookmarks(int? pageSize, int? pageNumber, int tweetId)
+        public ActionResult<IEnumerable<UserDetails>> GetTweetBookmarks(int? pageSize, int? pageNumber, int tweetId)
         {
-            return _userBookmarksService.GetTweetBookmarks(pageSize ?? 10, pageNumber ?? 1, tweetId).ToList();
+            var currnetUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            return _userBookmarksService.GetTweetBookmarks(pageSize ?? 10, pageNumber ?? 1, tweetId, currnetUserID).ToList();
         }
 
     }

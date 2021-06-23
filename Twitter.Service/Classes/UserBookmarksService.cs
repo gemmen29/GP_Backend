@@ -38,9 +38,16 @@ namespace Twitter.Service.Classes
             _userBookmarksRepository.RemoveBookMark(userBookmarks);
         }
 
-        public List<UserInteractionDetails> GetTweetBookmarks(int pageSize, int pageNumber, int tweetID)
+        public List<UserDetails> GetTweetBookmarks(int pageSize, int pageNumber, int tweetID, string currentUserId)
         {
-            return Mapper.Map<UserInteractionDetails[]>(_userBookmarksRepository.GetTweetBookmarks(pageSize, pageNumber, tweetID)).ToList();
+            //return Mapper.Map<UserInteractionDetails[]>(_userBookmarksRepository.GetTweetBookmarks(pageSize, pageNumber, tweetID)).ToList();
+            var users = _userBookmarksRepository.GetTweetBookmarks(pageSize, pageNumber, tweetID).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            for (int i = 0; i < userDetails.Count(); i++)
+            {
+                userDetails[i].IsFollowedByCurrentUser = (currentUserId == userDetails[i].Id) || _userFollowingRepository.FollowingExists(currentUserId, userDetails[i].Id);
+            }
+            return userDetails;
         }
 
         public IEnumerable<TweetDetails> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID, string currentUserID)

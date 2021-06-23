@@ -38,9 +38,16 @@ namespace Twitter.Service.Classes
             _userLikesRepository.DisLike(userLikes);
         }
 
-        public List<UserInteractionDetails> GetTweetLikes(int pageSize, int pageNumber, int tweetID)
+        public List<UserDetails> GetTweetLikes(int pageSize, int pageNumber, int tweetID, string currentUserId)
         {
-            return Mapper.Map<UserInteractionDetails[]>(_userLikesRepository.GetTweetLikes(pageSize, pageNumber, tweetID)).ToList();
+            var users = _userLikesRepository.GetTweetLikes(pageSize, pageNumber, tweetID).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            for (int i = 0; i < userDetails.Count(); i++)
+            {
+                userDetails[i].IsFollowedByCurrentUser = (currentUserId == userDetails[i].Id) || _userFollowingRepository.FollowingExists(currentUserId, userDetails[i].Id);
+            }
+            return userDetails;
+            //return Mapper.Map<UserInteractionDetails[]>(_userLikesRepository.GetTweetLikes(pageSize, pageNumber, tweetID)).ToList();
         }
 
         public IEnumerable<TweetDetails> GetUserLikedTweets(int pageSize, int pageNumber, string userID, string currentUserID)
