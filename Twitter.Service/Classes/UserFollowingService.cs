@@ -29,9 +29,15 @@ namespace Twitter.Service.Classes
             _userFollowingRepository.UnFollow(following);
         }
 
-        public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId)
+        public List<UserDetails> GetFollowing(int pageSize, int pageNumber, string userId, string currentUserId)
         {
-            return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowings(pageSize, pageNumber, userId)).ToList();
+            var users = _userFollowingRepository.GetFollowings(pageSize, pageNumber, userId).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            for (int i = 0; i < userDetails.Count(); i++)
+            {
+                userDetails[i].IsFollowedByCurrentUser = (currentUserId == userDetails[i].Id) || _userFollowingRepository.FollowingExists(currentUserId, userDetails[i].Id);
+            }
+            return userDetails;
         }
 
         public bool FollowingExists(string userId, string followingId)
@@ -39,9 +45,15 @@ namespace Twitter.Service.Classes
             return _userFollowingRepository.FollowingExists(userId, followingId);
         }
 
-        public List<UserInteractionDetails> GetFollowers(int pageSize, int pageNumber, string userId)
+        public List<UserDetails> GetFollowers(int pageSize, int pageNumber, string userId, string currentUserId)
         {
-            return Mapper.Map<UserInteractionDetails[]>(_userFollowingRepository.GetFollowers(pageSize, pageNumber, userId)).ToList();
+            var users = _userFollowingRepository.GetFollowers(pageSize, pageNumber, userId).ToList();
+            var userDetails = Mapper.Map<List<UserDetails>>(users);
+            for (int i = 0; i < userDetails.Count(); i++)
+            {
+                userDetails[i].IsFollowedByCurrentUser = (currentUserId == userDetails[i].Id) || _userFollowingRepository.FollowingExists(currentUserId, userDetails[i].Id);
+            }
+            return userDetails;
         }
 
         public IEnumerable<UserDetails> SuggestedFollowers(string userId)

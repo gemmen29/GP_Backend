@@ -61,19 +61,19 @@ namespace Twitter.API.Controllers
 
 
         [HttpGet("/user/following/{username}/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowing(string username, int? pageSize, int? pageNumber)
+        public ActionResult<IEnumerable<UserDetails>> GetFollowing(string username, int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var currentUserId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userID = _authService.GetUserID(username).Result;
-            return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            return _userFollowingService.GetFollowing(pageSize ?? 10, pageNumber ?? 1, userID, currentUserId).ToList();
         }
 
         [HttpGet("/user/followers/{username}/{pageSize}/{pageNumber}")]
-        public ActionResult<IEnumerable<UserInteractionDetails>> GetFollowers(string username, int? pageSize, int? pageNumber)
+        public ActionResult<IEnumerable<UserDetails>> GetFollowers(string username, int? pageSize, int? pageNumber)
         {
-            //var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var currentUserId = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var userID = _authService.GetUserID(username).Result;
-            return _userFollowingService.GetFollowers(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
+            return _userFollowingService.GetFollowers(pageSize ?? 10, pageNumber ?? 1, userID, currentUserId).ToList();
         }
 
         [HttpGet("/user/suggestedfollowings")]

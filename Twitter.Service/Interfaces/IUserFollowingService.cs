@@ -12,8 +12,8 @@ namespace Twitter.Service.Interfaces
     {
         public void Follow(Following following);
         public void UnFollow(Following following);
-        public List<UserInteractionDetails> GetFollowing(int pageSize, int pageNumber, string userId);
-        public List<UserInteractionDetails> GetFollowers(int pageSize, int pageNumber, string userId);
+        public List<UserDetails> GetFollowing(int pageSize, int pageNumber, string userId, string currentUserId);
+        public List<UserDetails> GetFollowers(int pageSize, int pageNumber, string userId, string currentUserId);
         public bool FollowingExists(string userId, string followingId);
         public IEnumerable<UserDetails> SuggestedFollowers(string userId);
     }
