@@ -37,7 +37,8 @@ namespace Twitter.Repository.Classes
 
         public IEnumerable<Tweet> GetUserBookmarkedTweets(int pageSize, int pageNumber, string userID)
         {
-            return GetPageRecordsWhere(pageSize, pageNumber, u => u.UserId == userID, "Tweet.Author,Tweet.Images,Tweet.LikedTweets,Tweet.BookMarkedTweets,Tweet.Replies").OrderByDescending(t => t.Tweet.CreationDate).Select(u => u.Tweet).ToList();
+            //return GetPageRecordsWhere(pageSize, pageNumber, u => u.UserId == userID, "Tweet.Author,Tweet.Images,Tweet.LikedTweets,Tweet.BookMarkedTweets,Tweet.Replies,Tweet.RespondedTweet,Tweet.QouteTweet").OrderByDescending(t => t.Tweet.CreationDate).Select(u => u.Tweet).ToList();
+            return GetPageRecordsWhere(pageSize, pageNumber, u => u.UserId == userID, "Tweet.Author,Tweet.Images,Tweet.Video,Tweet.LikedTweets,Tweet.BookMarkedTweets,Tweet.Replies,Tweet.RespondedTweet,Tweet.QouteTweet", t => t.Tweet.CreationDate).Select(u => u.Tweet).ToList();
         }
 
         public void RemoveBookMark(UserBookmarks userBookmarks)

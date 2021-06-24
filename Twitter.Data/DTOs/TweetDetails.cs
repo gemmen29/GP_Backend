@@ -21,6 +21,7 @@ namespace Twitter.Data.DTOs
         public bool IsBookmarked { get; set; }
         public UserDetails Author { get; set; }
         public bool IsRetweet { get; set; }
+        public bool IsReply { get; set; }
         public TweetDetails Tweet { get; set; }
 
     }

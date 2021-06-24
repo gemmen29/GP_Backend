@@ -19,6 +19,7 @@ namespace Twitter.Repository.Interfaces
         public int GetTweetsCount();
 
         public IEnumerable<Tweet> GetMyTweets(string id, int pageSize, int pageNumber);
+        public IEnumerable<Tweet> GetMyRetweetsAndReplies(string id, int pageSize, int pageNumber);
         public int GetMyTweetsCount(string id);
 
         public IEnumerable<Tweet> GetHomePageTweets(string id, int pageSize, int pageNumber);
@@ -30,5 +31,6 @@ namespace Twitter.Repository.Interfaces
         public bool TweetExists(int id);
 
         public bool isRetweet(int id);
+        public bool isReply(int id);
     }
 }

@@ -45,6 +45,14 @@ namespace Twitter.API.Controllers
             return _tweetService.GetMyTweets(userID, currentUserID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
+        [HttpGet("retweets-and-replies/{username}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetRetweetsAndReplies(string username, int? pageSize, int? pageNumber)
+        {
+            var currentUserID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var userID = _authService.GetUserID(username).Result;
+            return _tweetService.GetMyRetweetsAndReplies(userID, currentUserID, pageSize ?? 10, pageNumber ?? 1).ToList();
+        }
+
         //[HttpGet("mytweets/count")]
         //public int GetCount(int? pageSize, int? pageNumber)
         //{

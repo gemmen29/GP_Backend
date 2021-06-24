@@ -48,7 +48,7 @@ namespace Twitter.Repository.classes
             }
             query = includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
                 .Aggregate(query, (current, includeProperty) => current.Include(includeProperty));
-
+            //query = query.OrderByDescending(orderBy);
             return query;
         }
 
@@ -182,10 +182,23 @@ namespace Twitter.Repository.classes
 
             return query.Skip(pageNumber * pageSize).Take(pageSize).ToList();
         }
+
+        public IEnumerable<T> GetPageRecordsWhere<TKey>(int pageSize, int pageNumber, Expression<Func<T, bool>> filter = null, string includeProperties = "", Expression<Func<T, TKey>> sortingExpression = null)
+        {
+            IQueryable<T> query = GetWhere(filter, includeProperties);
+            query = query.OrderByDescending<T, TKey>(sortingExpression);
+
+            pageSize = (pageSize <= 0) ? 10 : pageSize;
+            pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
+
+            return query.Skip(pageNumber * pageSize).Take(pageSize).ToList();
+        }
         public virtual int CountEntityWhere(System.Linq.Expressions.Expression<Func<T, bool>> filter = null)
         {
             return GetWhere(filter).Count();
         }
+
+     
         #endregion
     }
 }

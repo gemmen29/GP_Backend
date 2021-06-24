@@ -62,15 +62,43 @@ namespace Twitter.Repository.Classes
 
         public IEnumerable<Tweet> GetMyTweets(string id, int pageSize, int pageNumber)
         {
-            pageSize = (pageSize <= 0) ? 10 : pageSize;
-            pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
+            //pageSize = (pageSize <= 0) ? 10 : pageSize;
+            //pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
 
-            return _context.Tweet.Where(t => t.AuthorId == id)
-                .Where(t => t.RespondedTweet.ReplyId != t.Id)
-                .Skip(pageNumber * pageSize).Take(pageSize)
-                .Include(t=>t.Author).Include(t => t.Images).Include(t => t.Video)
-                .Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets)
+            //return _context.Tweet.Where(t => t.AuthorId == id)
+            //    .Where(t => t.RespondedTweet.ReplyId != t.Id)
+            //    .Where(t => t.QouteTweet.QouteTweetId != t.Id)
+            //    .Skip(pageNumber * pageSize).Take(pageSize)
+            //    .Include(t => t.Author).Include(t => t.Images).Include(t => t.Video)
+            //    .Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets)
+            //    .Include(t => t.QouteTweet).Include(t => t.RespondedTweet)
+            //    .OrderByDescending(t => t.CreationDate)
+            //    .ToList();
+            return GetPageRecordsWhere(pageSize, pageNumber,
+                t => t.AuthorId == id && t.RespondedTweet.ReplyId != t.Id && t.QouteTweet.QouteTweetId != t.Id, 
+                "Author,Images,Video,LikedTweets,BookMarkedTweets,Replies,RespondedTweet,QouteTweet"
+                , t => t.CreationDate)
                 .ToList();
+        }
+
+        public IEnumerable<Tweet> GetMyRetweetsAndReplies(string id, int pageSize, int pageNumber)
+        {
+            //pageSize = (pageSize <= 0) ? 10 : pageSize;
+            //pageNumber = (pageNumber < 1) ? 0 : pageNumber - 1;
+
+            //return _context.Tweet.Where(t => t.AuthorId == id)
+            //    .Where(t => t.RespondedTweet.ReplyId == t.Id || t.QouteTweet.QouteTweetId == t.Id)
+            //    .Skip(pageNumber * pageSize).Take(pageSize)
+            //    .Include(t => t.Author).Include(t => t.Images).Include(t => t.Video)
+            //    .Include(t => t.Replies).Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets)
+            //    .Include(t => t.QouteTweet).Include(t => t.ReTweets)
+            //    .OrderByDescending(t => t.CreationDate)
+            //    .ToList();
+            return GetPageRecordsWhere(pageSize, pageNumber,
+            t => t.AuthorId == id && (t.RespondedTweet.ReplyId == t.Id || t.QouteTweet.QouteTweetId == t.Id),
+            "Author,Images,Video,LikedTweets,BookMarkedTweets,Replies,RespondedTweet,QouteTweet"
+            , t => t.CreationDate)
+    .       ToList();
         }
 
         public IEnumerable<Tweet> GetHomePageTweets(string id, int pageSize, int pageNumber)
@@ -145,6 +173,11 @@ namespace Twitter.Repository.Classes
         public bool isRetweet(int id)
         {
             return _context.Retweets.FirstOrDefault(r => r.QouteTweetId == id) != null; 
+        }
+
+        public bool isReply(int id)
+        {
+            return _context.Reply.FirstOrDefault(r => r.ReplyId == id) != null;
         }
     }
 }

@@ -36,6 +36,7 @@ namespace Twitter.Repository.Interfaces
         #region Paging
         public int CountEntity();
         public IEnumerable<T> GetPageRecords(int pageSize, int pageNumber);
+        public IEnumerable<T> GetPageRecordsWhere<TKey>(int pageSize, int pageNumber, System.Linq.Expressions.Expression<Func<T, bool>> filter = null, string includeProperties = "", Expression<Func<T, TKey>> sortingExpression = null);
         public IEnumerable<T> GetPageRecordsWhere(int pageSize, int pageNumber, System.Linq.Expressions.Expression<Func<T, bool>> filter = null, string includeProperties = "");
         public int CountEntityWhere(System.Linq.Expressions.Expression<Func<T, bool>> filter = null);
         #endregion

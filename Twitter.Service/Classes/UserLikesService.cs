@@ -16,16 +16,19 @@ namespace Twitter.Service.Classes
         private readonly IUserLikesRepository _userLikesRepository;
         private readonly IUserBookmarksRepository _userBookmarksRepository;
         private readonly IUserFollowingRepository _userFollowingRepository;
+        private ITweetRepository _tweetRepository { get; }
 
         public UserLikesService(
             IUserLikesRepository userLikesRepository,
             IUserBookmarksRepository userBookmarksRepository, 
             IUserFollowingRepository userFollowingRepository,
+            ITweetRepository tweetRepository,
             IMapper mapper) : base(mapper)
         {
             _userLikesRepository = userLikesRepository;
             _userBookmarksRepository = userBookmarksRepository;
             _userFollowingRepository = userFollowingRepository;
+            _tweetRepository = tweetRepository;
         }
 
         public void Like(UserLikes userLikes)
@@ -60,6 +63,18 @@ namespace Twitter.Service.Classes
                 tweetsDetails[i].IsLiked = _userLikesRepository.LikeExists(currentUserID, tweetsDetails[i].Id);
                 tweetsDetails[i].IsBookmarked = _userBookmarksRepository.BookmarkExists(currentUserID, tweetsDetails[i].Id);
                 tweetsDetails[i].Author.IsFollowedByCurrentUser = (currentUserID == tweetsDetails[i].Author.Id) || _userFollowingRepository.FollowingExists(currentUserID, tweetsDetails[i].Author.Id);
+                tweetsDetails[i].IsRetweet = _tweetRepository.isRetweet(tweetsDetails[i].Id);
+                tweetsDetails[i].IsReply = _tweetRepository.isReply(tweetsDetails[i].Id);
+                if (tweets.ElementAt(i).QouteTweet != null)
+                {
+                    var tweetId = tweets.ElementAt(i).QouteTweet.ReTweetId;
+                    tweetsDetails[i].Tweet = Mapper.Map<TweetDetails>(_tweetRepository.GetTweet(tweetId));
+                }
+                if (tweets.ElementAt(i).RespondedTweet != null)
+                {
+                    var tweetId = tweets.ElementAt(i).RespondedTweet.ReplyId;
+                    tweetsDetails[i].Tweet = Mapper.Map<TweetDetails>(_tweetRepository.GetTweet(tweetId));
+                }
             }
             return tweetsDetails;
         }
