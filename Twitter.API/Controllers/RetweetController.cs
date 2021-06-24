@@ -40,8 +40,6 @@ namespace Twitter.API.Controllers
         public ActionResult<List<RetweetDetails>> GetMyRetweets(int? pageSize, int? pageNumber)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
-
-
             return _retweetService.GetMyRetweets(pageSize ?? 10, pageNumber ?? 1, userID).ToList();
         }
 

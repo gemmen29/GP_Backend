@@ -28,6 +28,7 @@ namespace Twitter.Repository.Interfaces
         public Task<Tweet> PostTweet(Tweet tweet);
 
         public bool TweetExists(int id);
-        
+
+        public bool isRetweet(int id);
     }
 }

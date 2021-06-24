@@ -89,6 +89,7 @@ namespace Twitter.Repository.Classes
                 .Skip(pageNumber * pageSize).Take(pageSize)
                 .Include(t => t.Author).Include(t => t.Replies).Include(t => t.LikedTweets)
                 .Include(t => t.BookMarkedTweets).Include(t => t.Images).Include(t => t.Video)
+                .Include(t => t.ReTweets)
                 .ToList();
             //return
             //    _context.Tweet.Where(t => followingIds.Contains(t.AuthorId))
@@ -139,6 +140,11 @@ namespace Twitter.Repository.Classes
         public int GetMyTweetsCount(string id)
         {
             return CountEntityWhere(t => t.AuthorId == id);
+        }
+
+        public bool isRetweet(int id)
+        {
+            return _context.Retweets.FirstOrDefault(r => r.QouteTweetId == id) != null; 
         }
     }
 }

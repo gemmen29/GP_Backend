@@ -89,12 +89,18 @@ namespace Twitter.Service.Classes
         {
             var tweets = _tweetRepository.GetHomePageTweets(userId, pageSize, pageNumber);
             // trival solution
-            var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets);
+            var tweetsDetails = Mapper.Map<TweetDetails[]>(tweets).ToList();
             for (int i = 0; i < tweetsDetails.Count(); i++)
             {
                 tweetsDetails[i].IsLiked = _userLikesService.LikeExists(userId, tweetsDetails[i].Id);
                 tweetsDetails[i].IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetsDetails[i].Id);
                 tweetsDetails[i].Author.IsFollowedByCurrentUser = (userId == tweetsDetails[i].Author.Id) || _userFollowingService.FollowingExists(userId, tweetsDetails[i].Author.Id);
+                tweetsDetails[i].IsRetweet = _tweetRepository.isRetweet(tweetsDetails[i].Id);
+                if (tweets.ElementAt(i).QouteTweet != null)
+                {
+                    var tweetId = tweets.ElementAt(i).QouteTweet.ReTweetId;
+                    tweetsDetails[i].Tweet = Mapper.Map<TweetDetails>(_tweetRepository.GetTweet(tweetId));
+                }
             }
             return tweetsDetails;
         }

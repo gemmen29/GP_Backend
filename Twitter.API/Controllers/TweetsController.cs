@@ -57,7 +57,7 @@ namespace Twitter.API.Controllers
         public ActionResult<IEnumerable<TweetDetails>> GetHomePageTweets(int? pageSize, int? pageNumber)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
-            
+            //var userID = "c732ee53-0cc7-48c2-9079-d5a7d3abc186";
             return _tweetService.GetHomePageTweets(userID, pageSize ?? 10, pageNumber ?? 1).ToList();
         }
 
