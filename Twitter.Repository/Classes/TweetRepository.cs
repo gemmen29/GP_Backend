@@ -164,14 +164,14 @@ namespace Twitter.Repository.Classes
                 return true;
         }
 
-        public async Task DeleteTweet(int id)
+        public void DeleteTweet(int id)
         {
             _context.Reply.RemoveRange(_context.Reply.Where(r => r.TweetId == id || r.ReplyId == id).ToList());
             _context.Retweets.RemoveRange(_context.Retweets.Where(r => r.QouteTweetId == id || r.ReTweetId == id).ToList());
             _context.SaveChanges();
-            Delete(id);
-            //_context.Tweet.Remove(_context.Tweet.FirstOrDefault(t => t.Id == id));
-            await _context.SaveChangesAsync();
+            //Delete(id);
+            _context.Tweet.Remove(_context.Tweet.FirstOrDefault(t => t.Id == id));
+            _context.SaveChanges();
         }
 
         public int GetMyTweetsCount(string id)
