@@ -20,12 +20,18 @@ namespace Twitter.API.Controllers
         private readonly ITweetService _tweetService;
         private readonly IHttpContextAccessor _httpContextAccessor;
         private readonly IAuthService _authService;
+        private readonly IReplyService _replyService;
 
-        public TweetsController(ITweetService tweetService, IHttpContextAccessor httpContextAccessor, IAuthService authService)
+        public TweetsController(
+            ITweetService tweetService, 
+            IHttpContextAccessor httpContextAccessor, 
+            IAuthService authService,
+            IReplyService replyService)
         {
             _tweetService = tweetService;
             _httpContextAccessor = httpContextAccessor;
             _authService = authService;
+            _replyService = replyService;
         }
 
         // GET: api/Tweets
@@ -71,7 +77,7 @@ namespace Twitter.API.Controllers
 
         // GET: api/Tweets/5
         [HttpGet("{id:int}")]
-        public ActionResult<TweetWithReplies> GetTweet(int id)
+        public ActionResult<TweetDetails> GetTweet(int id)
         {
             var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
             var tweet = this._tweetService.GetTweet(userID, id);
@@ -110,10 +116,12 @@ namespace Twitter.API.Controllers
         }
 
         // GET: api/TweetReplies
-        [HttpGet("TweetReplies/{id:int}")]
-        public ActionResult<IEnumerable<TweetDetails>> GetTweetReplies(int id)
+        [HttpGet("TweetReplies/{id:int}/{pageSize}/{pageNumber}")]
+        public ActionResult<IEnumerable<TweetDetails>> GetTweetReplies(int id, int? pageSize, int? pageNumber)
         {
-            return this._tweetService.GetTweetReplies(id).ToList();
+            var userID = _httpContextAccessor.HttpContext.User.Claims.First(c => c.Type == "uid").Value;
+            var replies = _replyService.GetTweetReplies(userID, id, pageSize ?? 10, pageNumber ?? 1).ToList();
+            return replies;
         }
 
         // DELETE: api/Tweets/5

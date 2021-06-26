@@ -16,10 +16,10 @@ namespace Twitter.Service.Interfaces
         public IEnumerable<TweetDetails> GetMyRetweetsAndReplies(string id, string currentUserID, int pageSize, int pageNumber);
         public int GetMyTweetsCount(string id);
         IEnumerable<TweetDetails> GetHomePageTweets(string id, int pageSize, int pageNumber);
-        TweetWithReplies GetTweet(string userId, int tweetId);
+        TweetDetails GetTweet(string userId, int tweetId);
         TweetDetails PostTweet(AddTweetModel tweet);
         TweetDetails PostReplyToTweet(int id, AddTweetModel tweet);
-        IEnumerable<TweetDetails> GetTweetReplies(int id);
+        //IEnumerable<TweetDetails> GetTweetReplies(int tweetId, int pageSize, int pageNumber);
         void DeleteTweet(int id);
         bool TweetExists(int id);
     }

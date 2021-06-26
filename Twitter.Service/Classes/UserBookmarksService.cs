@@ -72,7 +72,7 @@ namespace Twitter.Service.Classes
                 }
                 if (tweets.ElementAt(i).RespondedTweet != null)
                 {
-                    var tweetId = tweets.ElementAt(i).RespondedTweet.ReplyId;
+                    var tweetId = tweets.ElementAt(i).RespondedTweet.TweetId;
                     tweetsDetails[i].Tweet = Mapper.Map<TweetDetails>(_tweetRepository.GetTweet(tweetId));
                 }
             }
