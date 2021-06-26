@@ -11,8 +11,8 @@ namespace Twitter.Repository.Interfaces
     {
 
         public Tweet GetTweet(int id);
-        public Task DeleteTweet(int id);
-        public IEnumerable<Tweet> GetTweetReplies(int id);
+        public void DeleteTweet(int id);
+        //public IEnumerable<Tweet> GetTweetReplies(int tweetId, int pageSize, int pageNumber);
 
         public IEnumerable<Tweet> GetTweets(int pageSize, int pageNumber);
 

@@ -40,26 +40,22 @@ namespace Twitter.Service.Classes
             _tweetRepository.DeleteTweet(id);
         }
 
-        public TweetWithReplies GetTweet(string userId, int tweetId)
+        public TweetDetails GetTweet(string userId, int tweetId)
         {
             var tweet = _tweetRepository.GetTweet(tweetId);
             // trival solution
-            var tweetWithReplies = Mapper.Map<TweetWithReplies>(tweet);
-            tweetWithReplies.IsLiked = _userLikesService.LikeExists(userId, tweetId);
-            tweetWithReplies.IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetId);
-            for (int i = 0; i < tweetWithReplies.Replies.Count(); i++)
-            {
-                tweetWithReplies.Replies[i].IsLiked = _userLikesService.LikeExists(userId, tweetWithReplies.Replies[i].Id);
-                tweetWithReplies.Replies[i].IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetWithReplies.Replies[i].Id);
-            }
-            return tweetWithReplies;
+            var tweetDetails = Mapper.Map<TweetDetails>(tweet);
+            tweetDetails.IsLiked = _userLikesService.LikeExists(userId, tweetId);
+            tweetDetails.IsBookmarked = _userBookmarksService.BookmarkExists(userId, tweetId);
+            tweetDetails.Author.IsFollowedByCurrentUser = (userId == tweetDetails.Author.Id) || _userFollowingService.FollowingExists(userId, tweetDetails.Author.Id);
+            return tweetDetails;
         }
 
-        public IEnumerable<TweetDetails> GetTweetReplies(int id)
-        {
-            var tweets = _tweetRepository.GetTweetReplies(id);
-            return Mapper.Map<TweetDetails[]>(tweets);
-        }
+        //public IEnumerable<TweetDetails> GetTweetReplies(int tweetId, int pageSize, int pageNumbe)
+        //{
+        //    var tweets = _tweetRepository.GetTweetReplies(tweetId);
+        //    return Mapper.Map<TweetDetails[]>(tweets);
+        //}
 
         public IEnumerable<TweetDetails> GetTweets(int pageSize, int pageNumber)
         {
@@ -147,7 +143,7 @@ namespace Twitter.Service.Classes
                 }
                 if (tweets.ElementAt(i).RespondedTweet != null)
                 {
-                    var tweetId = tweets.ElementAt(i).RespondedTweet.ReplyId;
+                    var tweetId = tweets.ElementAt(i).RespondedTweet.TweetId;
                     tweetsDetails[i].Tweet = Mapper.Map<TweetDetails>(_tweetRepository.GetTweet(tweetId));
                 }
             }

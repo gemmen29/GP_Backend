@@ -23,13 +23,16 @@ namespace Twitter.Service.Configrations
                     opt => opt.MapFrom(src => src.Followers.Count)
                 )
                 .ReverseMap();
+
             CreateMap<RegisterModel, ApplicationUser>().ReverseMap();
+
             CreateMap<ApplicationUser, UpdateUserModel>()
                 .ForMember(
                     dest => dest.Image,
                     opt => opt.MapFrom(src => src.UserPic)
                 )
                 .ReverseMap();
+
             CreateMap<Tweet, TweetDetails>()
                 .ForMember(
                     dest => dest.LikeCount,
@@ -38,6 +41,10 @@ namespace Twitter.Service.Configrations
                 .ForMember(
                     dest => dest.ReplyCount,
                     opt => opt.MapFrom(src => src.Replies.Count)
+                )
+                .ForMember(
+                    dest => dest.RetweetCount,
+                    opt => opt.MapFrom(src => src.ReTweets.Count)
                 )
                 .ForMember(
                     dest => dest.BookmarkCount,
@@ -61,37 +68,42 @@ namespace Twitter.Service.Configrations
 
             CreateMap<Reply, TweetDetails>()
                 .ForMember(
-                dest => dest.Author,
-                opt => opt.MapFrom(src => src.Tweet.Author)
+                    dest => dest.Author,
+                    opt => opt.MapFrom(src => src.Tweet.Author)
                 )
                 .ForMember(
-                dest => dest.Body,
-                opt => opt.MapFrom(src => src.Tweet.Body)
+                    dest => dest.Body,
+                    opt => opt.MapFrom(src => src.Tweet.Body)
                 )
                 .ForMember(
-                dest => dest.CreationDate,
-                opt => opt.MapFrom(src => src.Tweet.CreationDate)
+                    dest => dest.CreationDate,
+                    opt => opt.MapFrom(src => src.Tweet.CreationDate)
                 )
                 .ForMember(
                 dest => dest.Id,
                 opt => opt.MapFrom(src => src.Tweet.Id)
                 )
                 .ForMember(
-                dest => dest.Images,
-                opt => opt.MapFrom(src => src.Tweet.Images)
+                    dest => dest.Images,
+                    opt => opt.MapFrom(src => src.Tweet.Images)
                 )
                 .ForMember(
-                dest => dest.LikeCount,
-                opt => opt.MapFrom(src => src.Tweet.LikedTweets.Count)
+                    dest => dest.LikeCount,
+                    opt => opt.MapFrom(src => src.Tweet.LikedTweets.Count)
                 )
                 .ForMember(
-                dest => dest.ReplyCount,
-                opt => opt.MapFrom(src => src.Tweet.Replies.Count)
+                    dest => dest.ReplyCount,
+                    opt => opt.MapFrom(src => src.Tweet.Replies.Count)
                 )
                 .ForMember(
-                dest => dest.Video,
-                opt => opt.MapFrom(src => src.Tweet.Video)
+                    dest => dest.RetweetCount,
+                    opt => opt.MapFrom(src => src.Tweet.ReTweets.Count)
+                )
+                .ForMember(
+                    dest => dest.Video,
+                    opt => opt.MapFrom(src => src.Tweet.Video)
                 ).ReverseMap();
+
             CreateMap<Tweet, TweetWithReplies>()
                  .ForMember(
                     dest => dest.LikeCount,

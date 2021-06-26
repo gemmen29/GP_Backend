@@ -24,28 +24,34 @@ namespace Twitter.Repository.Classes
             return _context.Tweet.Where(t => t.Id == id)
                 .Include(t => t.Author).Include(t => t.Images).Include(t => t.Video)
                 .Include(t => t.LikedTweets).Include(t => t.BookMarkedTweets)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet.Images)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet.Video)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet.Author)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet.LikedTweets)
-                .Include(t => t.Replies).ThenInclude(r => r.Tweet.BookMarkedTweets).FirstOrDefault();
+                .Include(t => t.ReTweets).Include(t => t.Replies).FirstOrDefault();
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet)
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet.Images)
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet.Video)
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet.Author)
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet.LikedTweets)
+                //.Include(t => t.Replies).ThenInclude(r => r.Tweet.BookMarkedTweets).FirstOrDefault();
         }
 
-        public IEnumerable<Tweet> GetTweetReplies(int id)
-        {
-            //var replies = _context.Reply.Where(r => r.TweetId == id).ToList();
-            //List<Tweet> tweets = new List<Tweet>();
+        //public IEnumerable<Tweet> GetTweetReplies(int tweetId, int pageSize, int pageNumber)
+        //{
+        //    //var replies = _context.Reply.Where(r => r.TweetId == id).ToList();
+        //    //List<Tweet> tweets = new List<Tweet>();
 
-            //foreach (var reply in replies)
-            //{
-            //    var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
-            //    tweets.Add(tweet);
-            //}
-            var replies = _context.Reply.Where(r => r.TweetId == id).Include(r => r.Tweet.Images).Include(r => r.Tweet.Video).Select(u => u.Tweet).ToList();
+        //    //foreach (var reply in replies)
+        //    //{
+        //    //    var tweet = _context.Tweet.Where(t => t.Id == reply.ReplyId).Include(t => t.Author).Include(t => t.Images).Include(t => t.Video).FirstOrDefault();
+        //    //    tweets.Add(tweet);
+        //    //}
+        //    //var replies = _context.Reply.Where(r => r.TweetId == id).Include(r => r.Tweet.Images).Include(r => r.Tweet.Video).Select(u => u.Tweet).ToList();
 
-            return replies;
-        }
+        //    //return replies;
+        //    return GetPageRecordsWhere(pageSize, pageNumber,
+        //    t => t.Replies. == id,
+        //  "Author,Images,Video,LikedTweets,BookMarkedTweets,Replies,RespondedTweet,QouteTweet"
+        //  , t => t.CreationDate)
+        //  .ToList();
+        //}
 
         public IEnumerable<Tweet> GetTweets(int pageSize, int pageNumber)
         {
@@ -158,14 +164,14 @@ namespace Twitter.Repository.Classes
                 return true;
         }
 
-        public async Task DeleteTweet(int id)
+        public void DeleteTweet(int id)
         {
             _context.Reply.RemoveRange(_context.Reply.Where(r => r.TweetId == id || r.ReplyId == id).ToList());
             _context.Retweets.RemoveRange(_context.Retweets.Where(r => r.QouteTweetId == id || r.ReTweetId == id).ToList());
             _context.SaveChanges();
-            Delete(id);
-            //_context.Tweet.Remove(_context.Tweet.FirstOrDefault(t => t.Id == id));
-            await _context.SaveChangesAsync();
+            //Delete(id);
+            _context.Tweet.Remove(_context.Tweet.FirstOrDefault(t => t.Id == id));
+            _context.SaveChanges();
         }
 
         public int GetMyTweetsCount(string id)

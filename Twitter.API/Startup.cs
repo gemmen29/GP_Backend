@@ -59,12 +59,14 @@ namespace Twitter.API
             services.AddScoped<IUserLikesService, UserLikesService>();
             services.AddScoped<IUserBookmarksService, UserBookmarksService>();
             services.AddScoped<IRetweetService, RetweetService>();
+            services.AddScoped<IReplyService, ReplyService>();
             //repositories
             services.AddScoped<ITweetRepository, TweetRepository>();
             services.AddScoped<IUserFollowingRepository, UserFollowingRepository>();
             services.AddScoped<IUserLikesRepository, UserLikesRepository>();
             services.AddScoped<IUserBookmarksRepository, UserBookmarksRepository>();
             services.AddScoped<IRetweetRepository, RetweetRepository>();
+            services.AddScoped<IReplyRepository, ReplyRepository>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
             //services.AddScoped(typeof(ISearch<>), typeof(SearchUserRepository));
             services.AddScoped<ISearch<ApplicationUser>, SearchUserRepository>();
