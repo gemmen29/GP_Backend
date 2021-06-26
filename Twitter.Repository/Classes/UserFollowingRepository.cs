@@ -79,6 +79,13 @@ namespace Twitter.Repository.Classes
                 }
             }
 
+            if (suggestedFollowings.Count() < 3)
+            {
+                int numberOfExtraSuggestedFollowings = 3 - suggestedFollowings.Count();
+                var result3 = _context.Users.Where(u => u.Id != userId).Take(numberOfExtraSuggestedFollowings).ToList();
+                suggestedFollowings.AddRange(result3);
+            }
+
             return suggestedFollowings;
         }
     }
